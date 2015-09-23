@@ -19,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.HttpEntity;
@@ -27,6 +30,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 
 import java.net.HttpURLConnection;
 
@@ -64,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
                 try
                 {
                     HttpClient httpClient = new DefaultHttpClient();
-                    url = "http://api.map.baidu.com/telematics/v3/weather?location=北京&output=json&ak=gVdU1hNhSplDXKmdLtoRvK0O";
+                    url = "http://api.map.baidu.com/telematics/v3/weather?location=南京&output=json&ak=gVdU1hNhSplDXKmdLtoRvK0O";
                     HttpGet httpGet = new HttpGet(url);
                     HttpResponse httpResponse = httpClient.execute(httpGet);
                     if (httpResponse.getStatusLine().getStatusCode()==200)
@@ -81,6 +87,7 @@ public class MainActivity extends ActionBarActivity {
                         //调用解析
                         Log.d(TAG,""+response);
                         parseJsonWithGson(response);
+                        parseJson(response);
 
                     }
 
@@ -106,36 +113,71 @@ public class MainActivity extends ActionBarActivity {
         }
     };
 
-    //解析返回的数据
+    //用gson解析返回的数据
     private void parseJsonWithGson(String jsonData) {
         Gson gson = new Gson();
-        Log.d(TAG,"gson"+gson);
         WeatherInfo weatherInfo = gson.fromJson(jsonData,WeatherInfo.class);
+        Log.d(TAG,"weatherInfo"+weatherInfo);
         //下面两行 解析为数组
         //List<WeatherInfo> weatherList = gson.fromJson(jsonData, new TypeToken<List<WeatherInfo>>(){}.getType());
         //for (WeatherInfo weatherInfo : weatherList)
+        WeatherInfo.Results results = gson.fromJson(jsonData,WeatherInfo.Results.class);
         Log.d(TAG,"error is "+weatherInfo.getError());
         Log.d(TAG,"status is "+weatherInfo.getStatus());
         Log.d(TAG,"date is "+weatherInfo.getDate());
-        Log.d(TAG,""+weatherInfo);
-        //Log.d(TAG,""+ WeatherInfo.results.index.);
-        //WeatherInfo.results results = gson.fromJson(jsonData,WeatherInfo.results.class);
+        /////////////////////////////////////////////////////
+
+        WeatherInfo w = new WeatherInfo();
+        WeatherInfo.Results results1 = new WeatherInfo.Results();
+        Log.d(TAG, "" + results1.getCurrentCity());
+
+    }
+    //解析response
+    private void parseJson(String jsonData)
+    {
+        try
+        {
+
+            org.json.JSONObject jsonObject = new org.json.JSONObject(jsonData);
+            Log.d(TAG,"error is "+jsonObject.get("error"));
+            Log.d(TAG,"status is "+jsonObject.get("status"));
+            Log.d(TAG,"date is "+jsonObject.get("date"));
+            org.json.JSONArray resultsJsonArray = jsonObject.getJSONArray("results");
+            for (int i = 0;i<resultsJsonArray.length();i++)
+            {
+                org.json.JSONObject jsonObjectInResults = resultsJsonArray.getJSONObject(i);
+                Log.d(TAG,"pm25 is "+jsonObjectInResults.get("pm25"));
+                Log.d(TAG,"currentCity is "+jsonObjectInResults.get("currentCity"));
+                //遍历index
+                org.json.JSONArray indexArray = jsonObjectInResults.getJSONArray("index");
+                for (int j = 0;j<indexArray.length();j++)
+                {
+                    JSONObject jsonObjectInIndex = indexArray.getJSONObject(j);
+                    Log.d(TAG,"title is "+jsonObjectInIndex.get("title"));
+                    Log.d(TAG,"zs is "+jsonObjectInIndex.get("zs"));
+                    Log.d(TAG,"tips is "+jsonObjectInIndex.get("tipt"));
+                    Log.d(TAG,"des is "+jsonObjectInIndex.get("des"));
+                }
+                //遍历weather_data
+                JSONArray weatherDataArray = jsonObjectInResults.getJSONArray("weather_data");
+                for (int k = 0; k<weatherDataArray.length();k++)
+                {
+                    JSONObject jsonObjectInWeatherData = weatherDataArray.getJSONObject(k);
+                    Log.d(TAG,"date is "+jsonObjectInWeatherData.get("date"));
+                    Log.d(TAG,"dayPictureUrl is "+jsonObjectInWeatherData.get("dayPictureUrl"));
+                    Log.d(TAG,"nightPictureUrl is "+jsonObjectInWeatherData.get("nightPictureUrl"));
+                    Log.d(TAG,"weather is "+jsonObjectInWeatherData.get("weather"));
+                    Log.d(TAG,"wind is "+jsonObjectInWeatherData.get("wind"));
+                    Log.d(TAG,"temperature is "+jsonObjectInWeatherData.get("temperature"));
+                }
+            }
 
 
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
-
-
-
-//        List<WeatherInfo.results> resultList = gson.fromJson(jsonData,new TypeToken<List<WeatherInfo.results>>(){}.getType());
-//        for (WeatherInfo.results results:resultList)
-//        {
-//            Log.d(TAG,"currentcity is "+results.getCurrentCity());
-//            Log.d(TAG,"pm25 is "+results.getPm25());
-//
-//        }
-//        WeatherInfo.Results results = gson.fromJson(jsonData, WeatherInfo.Results.class);
-//        Log.d(TAG,"currentcity is "+results.getCurrentCity());
-//        Log.d(TAG,"pm25 is "+results.getPm25());
     }
     //初始化
     public void init()

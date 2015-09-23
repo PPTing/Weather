@@ -1746,7 +1746,7 @@ containing a value of this type.
         public static final int chronometer=0x7f0c005b;
         public static final int collapseActionView=0x7f0c001c;
         public static final int contentPanel=0x7f0c002f;
-        public static final int currentTemTextView=0x7f0c0050;
+        public static final int currentTemTextView=0x7f0c004f;
         public static final int custom=0x7f0c0033;
         public static final int customPanel=0x7f0c0032;
         public static final int decor_content_parent=0x7f0c003c;
@@ -1769,7 +1769,7 @@ containing a value of this type.
         public static final int listMode=0x7f0c0009;
         public static final int list_item=0x7f0c0028;
         public static final int listview=0x7f0c0053;
-        public static final int logoImageView=0x7f0c0052;
+        public static final int logoImageView=0x7f0c0051;
         public static final int media_actions=0x7f0c0057;
         public static final int middle=0x7f0c001a;
         public static final int multiply=0x7f0c0013;
@@ -1780,7 +1780,7 @@ containing a value of this type.
         public static final int progress_circular=0x7f0c0005;
         public static final int progress_horizontal=0x7f0c0006;
         public static final int radio=0x7f0c0038;
-        public static final int review=0x7f0c004f;
+        public static final int review=0x7f0c004e;
         public static final int screen=0x7f0c0014;
         public static final int scrollView=0x7f0c0030;
         public static final int search_badge=0x7f0c0042;
@@ -1806,7 +1806,7 @@ containing a value of this type.
         public static final int status_bar_latest_event_content=0x7f0c0056;
         public static final int submit_area=0x7f0c0049;
         public static final int tabMode=0x7f0c000b;
-        public static final int testbutton=0x7f0c004e;
+        public static final int testbutton=0x7f0c0052;
         public static final int text=0x7f0c005e;
         public static final int text2=0x7f0c005c;
         public static final int textSpacerNoButtons=0x7f0c0031;
@@ -1814,7 +1814,7 @@ containing a value of this type.
         public static final int title=0x7f0c002a;
         public static final int title_template=0x7f0c002d;
         public static final int tl_custom=0x7f0c0062;
-        public static final int todayTemTextView=0x7f0c0051;
+        public static final int todayTemTextView=0x7f0c0050;
         public static final int topPanel=0x7f0c002c;
         public static final int up=0x7f0c0008;
         public static final int useLogo=0x7f0c0012;

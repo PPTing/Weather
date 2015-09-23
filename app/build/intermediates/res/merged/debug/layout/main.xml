@@ -68,7 +68,11 @@
 
 
     </com.zhy.android.percent.support.PercentLinearLayout>
-
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="testsend"
+        android:id="@+id/testbutton"/>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

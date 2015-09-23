@@ -472,7 +472,7 @@ int id checkbox 0x7f0c0036
 int id chronometer 0x7f0c005b
 int id collapseActionView 0x7f0c001c
 int id contentPanel 0x7f0c002f
-int id currentTemTextView 0x7f0c0050
+int id currentTemTextView 0x7f0c004f
 int id custom 0x7f0c0033
 int id customPanel 0x7f0c0032
 int id decor_content_parent 0x7f0c003c
@@ -495,7 +495,7 @@ int id line3 0x7f0c005d
 int id listMode 0x7f0c0009
 int id list_item 0x7f0c0028
 int id listview 0x7f0c0053
-int id logoImageView 0x7f0c0052
+int id logoImageView 0x7f0c0051
 int id media_actions 0x7f0c0057
 int id middle 0x7f0c001a
 int id multiply 0x7f0c0013
@@ -506,7 +506,7 @@ int id parentPanel 0x7f0c002b
 int id progress_circular 0x7f0c0005
 int id progress_horizontal 0x7f0c0006
 int id radio 0x7f0c0038
-int id review 0x7f0c004f
+int id review 0x7f0c004e
 int id screen 0x7f0c0014
 int id scrollView 0x7f0c0030
 int id search_badge 0x7f0c0042
@@ -532,7 +532,7 @@ int id src_over 0x7f0c0017
 int id status_bar_latest_event_content 0x7f0c0056
 int id submit_area 0x7f0c0049
 int id tabMode 0x7f0c000b
-int id testbutton 0x7f0c004e
+int id testbutton 0x7f0c0052
 int id text 0x7f0c005e
 int id text2 0x7f0c005c
 int id textSpacerNoButtons 0x7f0c0031
@@ -540,7 +540,7 @@ int id time 0x7f0c005a
 int id title 0x7f0c002a
 int id title_template 0x7f0c002d
 int id tl_custom 0x7f0c0062
-int id todayTemTextView 0x7f0c0051
+int id todayTemTextView 0x7f0c0050
 int id topPanel 0x7f0c002c
 int id up 0x7f0c0008
 int id useLogo 0x7f0c0012
