@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars/libs/internal_impl-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex dex="/Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/pre-dexed/debug/internal_impl-23.0.1-83014af73889b1e0a34b6b98a10f0c52c3ef502c.jar" />
+    </item>
+    <item
+        jar="/Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
+        <dex dex="/Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/pre-dexed/debug/classes-1997f281d370965e72adfd049ef39cac6fc122bf.jar" />
+    </item>
+    <item
+        jar="/Users/PPTing/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.3.1/ecb6e1f8e4b0e84c4b886c2f14a1500caf309757/gson-2.3.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="ecb6e1f8e4b0e84c4b886c2f14a1500caf309757">
+        <dex dex="/Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/pre-dexed/debug/gson-2.3.1-120b1fc53adf10a9a429ea0590620cdc39518cdb.jar" />
+    </item>
+    <item
+        jar="/Users/PPTing/AndroidStudioProjects/Weather/app/libs/httpclient-4.5.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="a1e6cbb3cc2c5f210dd1310ff9fcb2c09c0d1438">
+        <dex dex="/Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/pre-dexed/debug/httpclient-4.5-7221a4257138f0b8107007f99a19d4fb3a212569.jar" />
+    </item>
+    <item
+        jar="/Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.zhy/percent-support-extends/1.0.6/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="f06e3904f9a93a1e6f91e100f1c0a21e950e870e">
+        <dex dex="/Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/pre-dexed/debug/classes-b1b9a5ac24f2d6e08c4bd29c0665860c845a5ce5.jar" />
+    </item>
+    <item
+        jar="/Users/PPTing/AndroidStudioProjects/Weather/app/libs/httpcore-4.0.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="e813b8722c387b22e1adccf7914729db09bcb4a9">
+        <dex dex="/Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/pre-dexed/debug/httpcore-4.0.1-f97eafdb8e30254fd757932272b4f08f7d601ace.jar" />
+    </item>
+    <item
+        jar="/Users/PPTing/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.0.1/support-annotations-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex dex="/Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/pre-dexed/debug/support-annotations-23.0.1-bb56dd95668ac6f71b1c7248b3b92d1b82dc020d.jar" />
+    </item>
+    <item
+        jar="/Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="d86429b0f0b3f3cafbeb78dda1b9d89119ccb05d">
+        <dex dex="/Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/pre-dexed/debug/classes-f226423a779a311144010eba6cebec15f1d78c50.jar" />
+    </item>
+
+</items>

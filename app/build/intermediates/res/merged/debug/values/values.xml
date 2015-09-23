@@ -219,6 +219,8 @@
     <!-- From: file:/Users/PPTing/AndroidStudioProjects/Weather/app/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="app_name">Weather</string>
+    <string name="close">close</string>
+    <string name="open">open</string>
     <!-- From: file:/Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/values/values.xml -->
     <eat-comment/>
     <string name="status_bar_notification_info_overflow">999+</string>

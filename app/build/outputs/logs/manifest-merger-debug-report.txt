@@ -42,6 +42,10 @@ category#android.intent.category.LAUNCHER
 ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:14:17-77
 	android:name
 		ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:14:27-74
+uses-permission#android.permission.INTERNET
+ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:18:5-66
+	android:name
+		ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:18:22-64
 uses-sdk
 INJECTED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 MERGED from [com.android.support:appcompat-v7:23.0.1] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/AndroidManifest.xml:20:5-43
