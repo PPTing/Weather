@@ -38,6 +38,8 @@ import java.net.HttpURLConnection;
 
 import java.util.List;
 import java.util.logging.LogRecord;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends ActionBarActivity {
     private String[] data;
@@ -45,7 +47,7 @@ public class MainActivity extends ActionBarActivity {
     public final static String TAG = MainActivity.class.getName();
     private Button testbutton;
     private String location;
-
+    public int UPDATETEXT;
 
 
     @Override
@@ -65,37 +67,41 @@ public class MainActivity extends ActionBarActivity {
     }
     private void sendRequest2Server()
     {
-
         new Thread(new Runnable() {
             @Override
             public void run()
-            {//传递message给handler 用于改变天气图标
-                Message message = new Message();
-                message.what = 1;
-                handler.sendMessage(message);}
-        }).start();
-        try
-        {
-            HttpClient httpClient = new DefaultHttpClient();
-            location = "南京";
-            url = "http://api.map.baidu.com/telematics/v3/weather?location="+location+"&output=json&ak=gVdU1hNhSplDXKmdLtoRvK0O";
-            HttpGet httpGet = new HttpGet(url);
-            HttpResponse httpResponse = httpClient.execute(httpGet);
-            if (httpResponse.getStatusLine().getStatusCode()==200)
             {
-                Log.d(TAG,"获取json成功");
-                HttpEntity entity = httpResponse.getEntity();
-                String response = EntityUtils.toString(entity, "UTF-8");
-                //
-                //调用解析
-                Log.d(TAG,"response json"+response);
-                parseJsonWithGson(response);
-                parseJson(response);
-            }
+                try
+                {
+                    HttpClient httpClient = new DefaultHttpClient();
+                    location = "南京";
+                    url = "http://api.map.baidu.com/telematics/v3/weather?location="+location+"&output=json&ak=gVdU1hNhSplDXKmdLtoRvK0O";
+                    HttpGet httpGet = new HttpGet(url);
+                    HttpResponse httpResponse = httpClient.execute(httpGet);
+                    if (httpResponse.getStatusLine().getStatusCode()==200)
+                    {
+                        Log.d(TAG,"获取json成功");
+                        HttpEntity entity = httpResponse.getEntity();
+                        String response = EntityUtils.toString(entity, "UTF-8");
+                        //
+                        //调用解析
+                        Log.d(TAG,"response json"+response);
+                        ParseJson parseJson = new ParseJson();
+                        parseJson.parseJsonWithGson(response);
+                        parseJson.parseJson(response);
+                        //传递message给handler 用于改变天气图标
+                        Message message = new Message();
+                        message.what = 1;
+                        message.obj = response.toString();
+                        handler.sendMessage(message);
+                    }
 
-        }
-        catch (Exception e)
-        {e.printStackTrace();}
+                }
+                catch (Exception e)
+                {e.printStackTrace();}
+
+            }
+        }).start();
     }
     //获取解析后的数据然后改变图标和温度 先写Log 无内容
     private Handler handler = new Handler()
@@ -113,6 +119,7 @@ public class MainActivity extends ActionBarActivity {
         }
     };
 
+    /*
     //用gson解析返回的数据
     private void parseJsonWithGson(String jsonData) {
         Log.d(TAG,"用gson进行解析");
@@ -149,7 +156,8 @@ public class MainActivity extends ActionBarActivity {
                 org.json.JSONObject jsonObjectInResults = resultsJsonArray.getJSONObject(i);
                 Log.d(TAG,"pm25 is "+jsonObjectInResults.get("pm25"));
                 Log.d(TAG,"currentCity is "+jsonObjectInResults.get("currentCity"));
-                //遍历index
+                //遍历index 该数据并不需要
+
                 org.json.JSONArray indexArray = jsonObjectInResults.getJSONArray("index");
                 for (int j = 0;j<indexArray.length();j++)
                 {
@@ -159,6 +167,7 @@ public class MainActivity extends ActionBarActivity {
                     Log.d(TAG,"tips is "+jsonObjectInIndex.get("tipt"));
                     Log.d(TAG,"des is "+jsonObjectInIndex.get("des"));
                 }
+
                 //遍历weather_data
                 JSONArray weatherDataArray = jsonObjectInResults.getJSONArray("weather_data");
                 for (int k = 0; k<weatherDataArray.length();k++)
@@ -170,16 +179,34 @@ public class MainActivity extends ActionBarActivity {
                     Log.d(TAG,"weather is "+jsonObjectInWeatherData.get("weather"));
                     Log.d(TAG,"wind is "+jsonObjectInWeatherData.get("wind"));
                     Log.d(TAG,"temperature is "+jsonObjectInWeatherData.get("temperature"));
+
+                    //用正则表达式取出 实时温度
+                    String str = jsonObjectInWeatherData.get("date").toString();
+                    String regEx = "：\\d+";
+                    Pattern pattern = Pattern.compile(regEx);
+                    Matcher matcher = pattern.matcher(str);
+                    boolean isFindRealtem = matcher.find();
+                    final String realTem = matcher.group();
+                    Log.d(TAG,"是否找到了实时温度 "+isFindRealtem);
+                    Log.d(TAG,"正则表达式找到的实时温度 "+realTem);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run()
+                        {
+                            Message message;
+                            message.what = UPDATETEXT;
+                            handler.sendMessage(message);
+
+                        }
+                    }).start();
                 }
             }
-
-
         }catch (Exception e)
         {
             e.printStackTrace();
         }
-
     }
+    */
     //初始化
     public void init()
     {
