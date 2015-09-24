@@ -44,6 +44,8 @@ public class MainActivity extends ActionBarActivity {
     private String url;
     public final static String TAG = MainActivity.class.getName();
     private Button testbutton;
+    private String location;
+
 
 
     @Override
@@ -51,7 +53,7 @@ public class MainActivity extends ActionBarActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    //初始化
+        //初始化
         init();
 
         //ListView
@@ -63,39 +65,37 @@ public class MainActivity extends ActionBarActivity {
     }
     private void sendRequest2Server()
     {
+
         new Thread(new Runnable() {
             @Override
             public void run()
-            {
-                try
-                {
-                    HttpClient httpClient = new DefaultHttpClient();
-                    url = "http://api.map.baidu.com/telematics/v3/weather?location=南京&output=json&ak=gVdU1hNhSplDXKmdLtoRvK0O";
-                    HttpGet httpGet = new HttpGet(url);
-                    HttpResponse httpResponse = httpClient.execute(httpGet);
-                    if (httpResponse.getStatusLine().getStatusCode()==200)
-                    {
-                        Log.d(TAG,"get 成功");
-                        HttpEntity entity = httpResponse.getEntity();
-                        String response = EntityUtils.toString(entity, "UTF-8");
-                        //传递message给handler 用于改变天气图标
-                        Message message = new Message();
-                        message.what = 1;
-                        message.obj = response.toString();
-                        handler.sendMessage(message);
-                        //
-                        //调用解析
-                        Log.d(TAG,""+response);
-                        parseJsonWithGson(response);
-                        parseJson(response);
-
-                    }
-
-                }
-                catch (Exception e)
-                {e.printStackTrace();}
-            }
+            {//传递message给handler 用于改变天气图标
+                Message message = new Message();
+                message.what = 1;
+                handler.sendMessage(message);}
         }).start();
+        try
+        {
+            HttpClient httpClient = new DefaultHttpClient();
+            location = "南京";
+            url = "http://api.map.baidu.com/telematics/v3/weather?location="+location+"&output=json&ak=gVdU1hNhSplDXKmdLtoRvK0O";
+            HttpGet httpGet = new HttpGet(url);
+            HttpResponse httpResponse = httpClient.execute(httpGet);
+            if (httpResponse.getStatusLine().getStatusCode()==200)
+            {
+                Log.d(TAG,"获取json成功");
+                HttpEntity entity = httpResponse.getEntity();
+                String response = EntityUtils.toString(entity, "UTF-8");
+                //
+                //调用解析
+                Log.d(TAG,"response json"+response);
+                parseJsonWithGson(response);
+                parseJson(response);
+            }
+
+        }
+        catch (Exception e)
+        {e.printStackTrace();}
     }
     //获取解析后的数据然后改变图标和温度 先写Log 无内容
     private Handler handler = new Handler()
@@ -115,6 +115,7 @@ public class MainActivity extends ActionBarActivity {
 
     //用gson解析返回的数据
     private void parseJsonWithGson(String jsonData) {
+        Log.d(TAG,"用gson进行解析");
         Gson gson = new Gson();
         WeatherInfo weatherInfo = gson.fromJson(jsonData,WeatherInfo.class);
         Log.d(TAG,"weatherInfo"+weatherInfo);
@@ -137,7 +138,7 @@ public class MainActivity extends ActionBarActivity {
     {
         try
         {
-
+            Log.d(TAG,"解析json数据");
             org.json.JSONObject jsonObject = new org.json.JSONObject(jsonData);
             Log.d(TAG,"error is "+jsonObject.get("error"));
             Log.d(TAG,"status is "+jsonObject.get("status"));
