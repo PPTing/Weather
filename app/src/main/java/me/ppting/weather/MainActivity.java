@@ -1,28 +1,21 @@
 package me.ppting.weather;
 
-import android.app.ActionBar;
-import android.graphics.Color;
-import android.graphics.drawable.AnimationDrawable;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.widget.DrawerLayout;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -30,24 +23,27 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-
+import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URL;
 
-import java.util.List;
-import java.util.logging.LogRecord;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class MainActivity extends ActionBarActivity {
     private String[] data;
     private String url;
     public final static String TAG = MainActivity.class.getName();
-    private Button testbutton;
+    private TextView currentTemTextView;
+    private TextView todayTemTextView;
+    private ImageView logoImageView;
+
+
     private String location;
-    public int UPDATETEXT;
+    public static final int UPDATEREALTEM = 1;
+    public static final int UPDATETODAYTEM = 2;
+    public static final int UPDATEDAYPICURL = 3;
+
+    Context context = MyApplication.getContext();
 
 
     @Override
@@ -59,12 +55,51 @@ public class MainActivity extends ActionBarActivity {
         init();
 
         //ListView
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-//                MainActivity.this, android.R.layout.simple_list_item_1, data);
-//        ListView listView = (ListView) findViewById(R.id.listview);
-//        listView.setAdapter(adapter);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                MainActivity.this, android.R.layout.simple_list_item_1, data);
+        ListView listView = (ListView) findViewById(R.id.listview);
+        listView.setAdapter(adapter);
 
     }
+
+    //获取解析后的数据然后改变图标和温度
+    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    private Handler handler = new Handler()
+    {
+        public void handleMessage(Message message)
+        {
+
+            switch (message.what)
+            {
+                case UPDATEREALTEM:
+                    currentTemTextView.setText(sharedPreferences.getString("realTem", ""));//更新实时温度
+                    Log.d(TAG,"更新实时温度");
+                    break;
+                case UPDATETODAYTEM:
+                    Log.d(TAG,"更新全天温度");
+                    todayTemTextView.setText(sharedPreferences.getString("todayTem", ""));//更新全天温度
+                    break;
+                case UPDATEDAYPICURL:
+                    Log.d(TAG,"更新天气图");
+                    //这样获取到的是点击按钮前存放在xml文件里头的url
+                    Log.d(TAG,"updatedaypicurl is "+sharedPreferences.getString("dayPictureUrl",""));
+                    logoImageView.setImageBitmap((Bitmap)message.obj);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+    //初始化
+    public void init()
+    {
+        sendRequest2Server();
+        showWeather();
+        currentTemTextView = (TextView)findViewById(R.id.currentTemTextView);
+        todayTemTextView = (TextView)findViewById(R.id.todayTemTextView);
+        logoImageView = (ImageView)findViewById(R.id.logoImageView);
+    }
+    //发送请求获得返回的天气信息json数据
     private void sendRequest2Server()
     {
         new Thread(new Runnable() {
@@ -80,22 +115,18 @@ public class MainActivity extends ActionBarActivity {
                     HttpResponse httpResponse = httpClient.execute(httpGet);
                     if (httpResponse.getStatusLine().getStatusCode()==200)
                     {
+                        Log.d(TAG,"服务器返回的代码为 "+httpResponse.getStatusLine().getStatusCode());
                         Log.d(TAG,"获取json成功");
                         HttpEntity entity = httpResponse.getEntity();
                         String response = EntityUtils.toString(entity, "UTF-8");
-                        //
+
                         //调用解析
-                        Log.d(TAG,"response json"+response);
+                        Log.d(TAG,"获取到的数据 "+response);
+                        //创建对象调用解析方法
                         ParseJson parseJson = new ParseJson();
                         parseJson.parseJsonWithGson(response);
                         parseJson.parseJson(response);
-                        //传递message给handler 用于改变天气图标
-                        Message message = new Message();
-                        message.what = 1;
-                        message.obj = response.toString();
-                        handler.sendMessage(message);
                     }
-
                 }
                 catch (Exception e)
                 {e.printStackTrace();}
@@ -103,120 +134,36 @@ public class MainActivity extends ActionBarActivity {
             }
         }).start();
     }
-    //获取解析后的数据然后改变图标和温度 先写Log 无内容
-    private Handler handler = new Handler()
+    //显示天气
+    public void showWeather()
     {
-        public void handleMessage(Message message)
-        {
-            switch (message.what)
-            {
-                case 1:
-                    Log.d(TAG,"获取数据成功");
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
-    /*
-    //用gson解析返回的数据
-    private void parseJsonWithGson(String jsonData) {
-        Log.d(TAG,"用gson进行解析");
-        Gson gson = new Gson();
-        WeatherInfo weatherInfo = gson.fromJson(jsonData,WeatherInfo.class);
-        Log.d(TAG,"weatherInfo"+weatherInfo);
-        //下面两行 解析为数组
-        //List<WeatherInfo> weatherList = gson.fromJson(jsonData, new TypeToken<List<WeatherInfo>>(){}.getType());
-        //for (WeatherInfo weatherInfo : weatherList)
-        WeatherInfo.Results results = gson.fromJson(jsonData,WeatherInfo.Results.class);
-        Log.d(TAG,"error is "+weatherInfo.getError());
-        Log.d(TAG,"status is "+weatherInfo.getStatus());
-        Log.d(TAG,"date is "+weatherInfo.getDate());
-        /////////////////////////////////////////////////////
-
-        WeatherInfo w = new WeatherInfo();
-        WeatherInfo.Results results1 = new WeatherInfo.Results();
-        Log.d(TAG, "" + results1.getCurrentCity());
-
-    }
-    //解析response
-    private void parseJson(String jsonData)
-    {
-        try
-        {
-            Log.d(TAG,"解析json数据");
-            org.json.JSONObject jsonObject = new org.json.JSONObject(jsonData);
-            Log.d(TAG,"error is "+jsonObject.get("error"));
-            Log.d(TAG,"status is "+jsonObject.get("status"));
-            Log.d(TAG,"date is "+jsonObject.get("date"));
-            org.json.JSONArray resultsJsonArray = jsonObject.getJSONArray("results");
-            for (int i = 0;i<resultsJsonArray.length();i++)
-            {
-                org.json.JSONObject jsonObjectInResults = resultsJsonArray.getJSONObject(i);
-                Log.d(TAG,"pm25 is "+jsonObjectInResults.get("pm25"));
-                Log.d(TAG,"currentCity is "+jsonObjectInResults.get("currentCity"));
-                //遍历index 该数据并不需要
-
-                org.json.JSONArray indexArray = jsonObjectInResults.getJSONArray("index");
-                for (int j = 0;j<indexArray.length();j++)
-                {
-                    JSONObject jsonObjectInIndex = indexArray.getJSONObject(j);
-                    Log.d(TAG,"title is "+jsonObjectInIndex.get("title"));
-                    Log.d(TAG,"zs is "+jsonObjectInIndex.get("zs"));
-                    Log.d(TAG,"tips is "+jsonObjectInIndex.get("tipt"));
-                    Log.d(TAG,"des is "+jsonObjectInIndex.get("des"));
-                }
-
-                //遍历weather_data
-                JSONArray weatherDataArray = jsonObjectInResults.getJSONArray("weather_data");
-                for (int k = 0; k<weatherDataArray.length();k++)
-                {
-                    JSONObject jsonObjectInWeatherData = weatherDataArray.getJSONObject(k);
-                    Log.d(TAG,"date is "+jsonObjectInWeatherData.get("date"));
-                    Log.d(TAG,"dayPictureUrl is "+jsonObjectInWeatherData.get("dayPictureUrl"));
-                    Log.d(TAG,"nightPictureUrl is "+jsonObjectInWeatherData.get("nightPictureUrl"));
-                    Log.d(TAG,"weather is "+jsonObjectInWeatherData.get("weather"));
-                    Log.d(TAG,"wind is "+jsonObjectInWeatherData.get("wind"));
-                    Log.d(TAG,"temperature is "+jsonObjectInWeatherData.get("temperature"));
-
-                    //用正则表达式取出 实时温度
-                    String str = jsonObjectInWeatherData.get("date").toString();
-                    String regEx = "：\\d+";
-                    Pattern pattern = Pattern.compile(regEx);
-                    Matcher matcher = pattern.matcher(str);
-                    boolean isFindRealtem = matcher.find();
-                    final String realTem = matcher.group();
-                    Log.d(TAG,"是否找到了实时温度 "+isFindRealtem);
-                    Log.d(TAG,"正则表达式找到的实时温度 "+realTem);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run()
-                        {
-                            Message message;
-                            message.what = UPDATETEXT;
-                            handler.sendMessage(message);
-
-                        }
-                    }).start();
-                }
-            }
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-    */
-    //初始化
-    public void init()
-    {
-        testbutton = (Button)findViewById(R.id.testbutton);
-        testbutton.setOnClickListener(new View.OnClickListener() {
+        new Thread(new Runnable() {
             @Override
-            public void onClick(View view) {
-                sendRequest2Server();
-                Log.d(TAG,"button click");
+            public void run()
+            {
+                Log.d(TAG, "Runnable is running");
+                Message msgUpdateRealTem = new Message();//更新实时温度
+                msgUpdateRealTem.what = UPDATEREALTEM;
+                handler.sendMessage(msgUpdateRealTem);
+                Message msgUpdateTodayTem = new Message();//更新全天温度
+                msgUpdateTodayTem.what = UPDATETODAYTEM;
+                handler.sendMessage(msgUpdateTodayTem);
+
+                try {//更新天气图标 获取存储在xml文件中的url并访问获取图标图片
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                    String dayUrl = sharedPreferences.getString("dayPictureUrl","");
+                    URL url = new URL(dayUrl);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    if (connection.getResponseCode()==200) {
+                        InputStream inputStream = connection.getInputStream();
+                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        handler.obtainMessage(UPDATEDAYPICURL, bitmap).sendToTarget();
+                    }else {
+                        Toast.makeText(context,"网络请求失败",Toast.LENGTH_LONG).show();}
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        });
+        }).start();
     }
 }

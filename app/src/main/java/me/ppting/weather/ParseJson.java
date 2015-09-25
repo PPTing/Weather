@@ -1,6 +1,10 @@
 package me.ppting.weather;
 
+import android.app.*;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -16,6 +20,7 @@ import java.util.regex.Pattern;
  */
 public class ParseJson
 {
+    Context context = MyApplication.getContext();
     public final static String TAG = ParseJson.class.getName();
     //用gson解析返回的数据
     public void parseJsonWithGson(String jsonData) {
@@ -43,18 +48,30 @@ public class ParseJson
         try
         {
             Log.d(TAG,"解析json数据");
-            org.json.JSONObject jsonObject = new org.json.JSONObject(jsonData);
+            JSONObject jsonObject = new JSONObject(jsonData);
             Log.d(TAG,"error is "+jsonObject.get("error"));
             Log.d(TAG,"status is "+jsonObject.get("status"));
             Log.d(TAG,"date is "+jsonObject.get("date"));
-            org.json.JSONArray resultsJsonArray = jsonObject.getJSONArray("results");
+            //找到今天的日期
+            String strGetDate = jsonObject.get("date").toString();
+            String regExGetDate = "(\\d{4})-(\\d{2})-(\\d{2})";
+            Pattern patternGetDate = Pattern.compile(regExGetDate);
+            Matcher matcherGetDate = patternGetDate.matcher(strGetDate);
+            boolean isFindDate = matcherGetDate.find();
+            final String date = matcherGetDate.group();
+            Log.d(TAG,"是否找到日期 "+isFindDate);
+            Log.d(TAG,"今天日期是 "+date);
+
+            JSONArray resultsJsonArray = jsonObject.getJSONArray("results");//遍历results
             for (int i = 0;i<resultsJsonArray.length();i++)
             {
                 org.json.JSONObject jsonObjectInResults = resultsJsonArray.getJSONObject(i);
                 Log.d(TAG,"pm25 is "+jsonObjectInResults.get("pm25"));
-                Log.d(TAG,"currentCity is "+jsonObjectInResults.get("currentCity"));
-                //遍历index 该数据并不需要
 
+                String currentCity = jsonObjectInResults.get("currentCity").toString();
+                Log.d(TAG,"currentCity is "+currentCity);
+                //遍历index 该数据并不需要
+                /*
                 org.json.JSONArray indexArray = jsonObjectInResults.getJSONArray("index");
                 for (int j = 0;j<indexArray.length();j++)
                 {
@@ -64,7 +81,7 @@ public class ParseJson
                     Log.d(TAG,"tips is "+jsonObjectInIndex.get("tipt"));
                     Log.d(TAG,"des is "+jsonObjectInIndex.get("des"));
                 }
-
+                */
                 //遍历weather_data
                 JSONArray weatherDataArray = jsonObjectInResults.getJSONArray("weather_data");
                 for (int k = 0; k<weatherDataArray.length();k++)
@@ -77,30 +94,65 @@ public class ParseJson
                     Log.d(TAG,"wind is "+jsonObjectInWeatherData.get("wind"));
                     Log.d(TAG,"temperature is "+jsonObjectInWeatherData.get("temperature"));
 
-                    //用正则表达式取出 实时温度
-                    String str = jsonObjectInWeatherData.get("date").toString();
-                    String regEx = "：\\d+";
-                    Pattern pattern = Pattern.compile(regEx);
-                    Matcher matcher = pattern.matcher(str);
-                    boolean isFindRealtem = matcher.find();
-                    final String realTem = matcher.group();
-                    Log.d(TAG,"是否找到了实时温度 "+isFindRealtem);
-                    Log.d(TAG,"正则表达式找到的实时温度 "+realTem);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run()
-                        {
-                            //Message message;
-                            //message.what = UPDATETEXT;
-                            //handler.sendMessage(message);
+                    if (k==0)//当天全天温度
+                    {
+                        //获取当天全天温度
+                        String strGetTodayTem = jsonObjectInWeatherData.get("temperature").toString();
+                        String regExGetTodayTem = "\\d+\\s\\~\\s\\d+";
+                        Pattern patternGetTodayTem = Pattern.compile(regExGetTodayTem);
+                        Matcher matcherGetTodayTem = patternGetTodayTem.matcher(strGetTodayTem);
+                        boolean isFindTodaytem = matcherGetTodayTem.find();
+                        final String todayTem = matcherGetTodayTem.group();
+                        Log.d(TAG, "是否找到了一天温度 " + isFindTodaytem);
+                        Log.d(TAG, "正则表达式找到的一天温度 " + todayTem);
+                        //获取白天天气图Url
+                        String dayPictureUrl = jsonObjectInWeatherData.get("dayPictureUrl").toString();
+                        Log.d(TAG,"dayPictureUrl is "+dayPictureUrl);
 
-                        }
-                    }).start();
+
+                        //获取实时温度
+                        String strGetRealTem = jsonObjectInWeatherData.get("date").toString();
+                        Log.d(TAG, "strGetRealTem is " + strGetRealTem);
+                        String regExGetRealTem = "：\\d+";
+                        Pattern patternGetRealTem = Pattern.compile(regExGetRealTem);
+                        Matcher matcherGetRealTem = patternGetRealTem.matcher(strGetRealTem);
+                        boolean isFindRealTemWithColon = matcherGetRealTem.find();
+                        final String realTemWithColon = matcherGetRealTem.group();
+                        Log.d(TAG, "realTemWithColon is " + realTemWithColon);
+
+                        String regExWithoutColon = "\\d+";
+                        Pattern patternWithoutColon = Pattern.compile(regExWithoutColon);
+                        Matcher matcherWithoutColon = patternWithoutColon.matcher(realTemWithColon);
+                        boolean isFindRealtem = matcherWithoutColon.find();
+                        final String realTem = matcherWithoutColon.group();
+                        Log.d(TAG, "是否找到了实时温度 " + isFindRealtem);
+                        Log.d(TAG, "正则表达式找到的实时温度 realTem " + realTem);
+
+                        //将解析到的天气信息存储到sharePerfence中 城市、日期、实时温度、一天温度、白天天气图Url
+                        saveWeatherInfo(context, currentCity, date, realTem, todayTem,dayPictureUrl);
+                    }
+//                    if (k==1)//第二天全天温度
+//                    {getTodayTem(jsonObjectInWeatherData);}
+//                    if (k==2)//第三天全天温度
+//                    {getTodayTem(jsonObjectInWeatherData);}
+
+
                 }
             }
         }catch (Exception e)
         {
             e.printStackTrace();
         }
+    }
+    //存储天气信息
+    public void saveWeatherInfo(Context context,String currentCity,String date,String realTem,String todayTem,String dayPictureUrl)
+    {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putString("currentCity", currentCity);
+        editor.putString("date",date);
+        editor.putString("realTem",realTem);
+        editor.putString("todayTem",todayTem);
+        editor.putString("dayPictureUrl",dayPictureUrl);
+        editor.commit();
     }
 }
