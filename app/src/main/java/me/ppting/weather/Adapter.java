@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,11 +35,15 @@ public class Adapter extends ArrayAdapter<Weather>
         ImageView imageView = (ImageView) view.findViewById(R.id.weatherIamge);
         TextView textView = (TextView) view.findViewById(R.id.weatherInfo);
         textView.setText(weather.getTem());//显示温度
-        //显示天气图标
+        //显示天气小图标
         try {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            String url = sharedPreferences.getString("dayPictureUrl","");
-            Bitmap bitmap = PictureLoader.loadImage(url);
+            String url = sharedPreferences.getString("dayPictureUrl", "");
+            //Bitmap bitmap = PictureLoader.loadImage(url);
+            MyAsyncTask myAsyncTask = new MyAsyncTask(getContext());
+            Bitmap bitmap = myAsyncTask.doInBackground(url);
+            Log.d("Adapter","url is "+url);
+            Log.d("Adapter","bitmap is "+bitmap);
             imageView.setImageBitmap(bitmap);
         }
         catch (Exception e)
