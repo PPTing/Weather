@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -27,6 +28,8 @@ import org.apache.http.util.EntityUtils;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -36,6 +39,8 @@ public class MainActivity extends ActionBarActivity {
     private TextView currentTemTextView;
     private TextView todayTemTextView;
     private ImageView logoImageView;
+    private ImageView weatherImage;
+    private ListView weatherInfoListView;
 
 
     private String location;
@@ -44,6 +49,7 @@ public class MainActivity extends ActionBarActivity {
     public static final int UPDATEDAYPICURL = 3;
 
     Context context = MyApplication.getContext();
+    private List<Weather> weatherList = new ArrayList<Weather>();
 
 
     @Override
@@ -51,15 +57,14 @@ public class MainActivity extends ActionBarActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
         //初始化
         init();
-
-        //ListView
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                MainActivity.this, android.R.layout.simple_list_item_1, data);
-        ListView listView = (ListView) findViewById(R.id.listview);
-        listView.setAdapter(adapter);
-
+        Adapter adapter = new Adapter(MainActivity.this,R.layout.weatherinfo,weatherList);
+        weatherInfoListView.setAdapter(adapter);
     }
 
     //获取解析后的数据然后改变图标和温度
@@ -98,6 +103,22 @@ public class MainActivity extends ActionBarActivity {
         currentTemTextView = (TextView)findViewById(R.id.currentTemTextView);
         todayTemTextView = (TextView)findViewById(R.id.todayTemTextView);
         logoImageView = (ImageView)findViewById(R.id.logoImageView);
+        weatherInfoListView = (ListView)findViewById(R.id.listview);
+        weatherImage = (ImageView)findViewById(R.id.weatherIamge);
+        //初始化Listview
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        String day2tem = sharedPreferences.getString("secondTem","");
+        //String url = sharedPreferences.getString("dayPictureUrl", "");
+        //Bitmap bitmap = PictureLoader.loadImage(url);
+        Weather day2 = new Weather(R.mipmap.ic_launcher,day2tem);
+        weatherList.add(day2);
+        String day3tem = sharedPreferences.getString("thirdTem","");
+        Weather day3 = new Weather(R.mipmap.ic_launcher,day3tem);
+        weatherList.add(day3);
+        String day4Tem = sharedPreferences.getString("fourthTem","");
+        Weather day4 = new Weather(R.mipmap.ic_launcher,day4Tem);
+        weatherList.add(day4);
     }
     //发送请求获得返回的天气信息json数据
     private void sendRequest2Server()
@@ -157,6 +178,7 @@ public class MainActivity extends ActionBarActivity {
                     if (connection.getResponseCode()==200) {
                         InputStream inputStream = connection.getInputStream();
                         Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        Log.d(TAG,"bitmap of big is "+bitmap);
                         handler.obtainMessage(UPDATEDAYPICURL, bitmap).sendToTarget();
                     }else {
                         Toast.makeText(context,"网络请求失败",Toast.LENGTH_LONG).show();}

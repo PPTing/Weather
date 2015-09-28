@@ -1817,6 +1817,8 @@ containing a value of this type.
         public static final int topPanel=0x7f0c002c;
         public static final int up=0x7f0c0008;
         public static final int useLogo=0x7f0c0012;
+        public static final int weatherIamge=0x7f0c0062;
+        public static final int weatherInfo=0x7f0c0063;
         public static final int withText=0x7f0c001f;
         public static final int wrap_content=0x7f0c0020;
     }
@@ -1868,6 +1870,7 @@ containing a value of this type.
         public static final int setting=0x7f040025;
         public static final int support_simple_spinner_dropdown_item=0x7f040026;
         public static final int toolbar=0x7f040027;
+        public static final int weatherinfo=0x7f040028;
     }
     public static final class mipmap {
         public static final int ic_launcher=0x7f030000;

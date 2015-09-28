@@ -92,7 +92,7 @@ public class ParseJson
                     Log.d(TAG,"nightPictureUrl is "+jsonObjectInWeatherData.get("nightPictureUrl"));
                     Log.d(TAG,"weather is "+jsonObjectInWeatherData.get("weather"));
                     Log.d(TAG,"wind is "+jsonObjectInWeatherData.get("wind"));
-                    Log.d(TAG,"temperature is "+jsonObjectInWeatherData.get("temperature"));
+                    Log.d(TAG, "temperature is " + jsonObjectInWeatherData.get("temperature"));
 
                     if (k==0)//当天全天温度
                     {
@@ -109,7 +109,6 @@ public class ParseJson
                         String dayPictureUrl = jsonObjectInWeatherData.get("dayPictureUrl").toString();
                         Log.d(TAG,"dayPictureUrl is "+dayPictureUrl);
 
-
                         //获取实时温度
                         String strGetRealTem = jsonObjectInWeatherData.get("date").toString();
                         Log.d(TAG, "strGetRealTem is " + strGetRealTem);
@@ -119,7 +118,6 @@ public class ParseJson
                         boolean isFindRealTemWithColon = matcherGetRealTem.find();
                         final String realTemWithColon = matcherGetRealTem.group();
                         Log.d(TAG, "realTemWithColon is " + realTemWithColon);
-
                         String regExWithoutColon = "\\d+";
                         Pattern patternWithoutColon = Pattern.compile(regExWithoutColon);
                         Matcher matcherWithoutColon = patternWithoutColon.matcher(realTemWithColon);
@@ -127,14 +125,60 @@ public class ParseJson
                         final String realTem = matcherWithoutColon.group();
                         Log.d(TAG, "是否找到了实时温度 " + isFindRealtem);
                         Log.d(TAG, "正则表达式找到的实时温度 realTem " + realTem);
-
                         //将解析到的天气信息存储到sharePerfence中 城市、日期、实时温度、一天温度、白天天气图Url
-                        saveWeatherInfo(context, currentCity, date, realTem, todayTem,dayPictureUrl);
+                        saveWeatherInfoDay1(context, currentCity, date, realTem, todayTem, dayPictureUrl);
                     }
-//                    if (k==1)//第二天全天温度
-//                    {getTodayTem(jsonObjectInWeatherData);}
-//                    if (k==2)//第三天全天温度
-//                    {getTodayTem(jsonObjectInWeatherData);}
+
+
+                    if (k==1)//第二天天气信息
+                    {
+                        //白天天气图url
+                        String day2PictureUrl = jsonObjectInWeatherData.get("dayPictureUrl").toString();
+                        Log.d(TAG, "dayPictureUrl of second day is " + day2PictureUrl);
+                        //第二天温度
+                        String strGetSecondTem = jsonObjectInWeatherData.get("temperature").toString();
+                        String regExGetSecondTem = "\\d+\\s\\~\\s\\d+";
+                        Pattern patternGetSecondTem = Pattern.compile(regExGetSecondTem);
+                        Matcher matcherGetSecondTem = patternGetSecondTem.matcher(strGetSecondTem);
+                        boolean isFindSecondTem = matcherGetSecondTem.find();
+                        final String secondTem = matcherGetSecondTem.group();
+                        Log.d(TAG, "是否找到了第二天全天温度 " + isFindSecondTem);
+                        Log.d(TAG, "正则表达式找到的第二天全天温度 " + secondTem);
+                        saveWeatherInfoDay2(context,day2PictureUrl,secondTem);
+                    }
+                    if (k==2)//第三天天气信息
+                    {
+                        //白天天气图url
+                        String day3PictureUrl = jsonObjectInWeatherData.get("dayPictureUrl").toString();
+                        Log.d(TAG, "dayPictureUrl of 3 day is " + day3PictureUrl);
+                        //第二天温度
+                        String strGet3Tem = jsonObjectInWeatherData.get("temperature").toString();
+                        String regExGet3Tem = "\\d+\\s\\~\\s\\d+";
+                        Pattern patternGet3Tem = Pattern.compile(regExGet3Tem);
+                        Matcher matcherGet3Tem = patternGet3Tem.matcher(strGet3Tem);
+                        boolean isFind3Tem = matcherGet3Tem.find();
+                        final String thirdTem = matcherGet3Tem.group();
+                        Log.d(TAG, "是否找到了第3天全天温度 " + isFind3Tem);
+                        Log.d(TAG, "正则表达式找到的第3天全天温度 " + thirdTem);
+                        saveWeatherInfoDay3(context,day3PictureUrl,thirdTem);
+                    }
+                    if (k==3)//第四天天气信息
+                    {
+                        //白天天气图url
+                        String day4PictureUrl = jsonObjectInWeatherData.get("dayPictureUrl").toString();
+                        Log.d(TAG, "dayPictureUrl of 4 day is " + day4PictureUrl);
+                        //第二天温度
+                        String strGet4Tem = jsonObjectInWeatherData.get("temperature").toString();
+                        String regExGet4Tem = "\\d+\\s\\~\\s\\d+";
+                        Pattern patternGet4Tem = Pattern.compile(regExGet4Tem);
+                        Matcher matcherGet4Tem = patternGet4Tem.matcher(strGet4Tem);
+                        boolean isFind4Tem = matcherGet4Tem.find();
+                        final String fourthTem = matcherGet4Tem.group();
+                        Log.d(TAG, "是否找到了第4天全天温度 " + isFind4Tem);
+                        Log.d(TAG, "正则表达式找到的第4天全天温度 " + fourthTem);
+                        saveWeatherInfoDay4(context,day4PictureUrl,fourthTem);
+                    }
+
 
 
                 }
@@ -145,7 +189,7 @@ public class ParseJson
         }
     }
     //存储天气信息
-    public void saveWeatherInfo(Context context,String currentCity,String date,String realTem,String todayTem,String dayPictureUrl)
+    public void saveWeatherInfoDay1(Context context,String currentCity,String date,String realTem,String todayTem,String dayPictureUrl)
     {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         editor.putString("currentCity", currentCity);
@@ -155,4 +199,25 @@ public class ParseJson
         editor.putString("dayPictureUrl",dayPictureUrl);
         editor.commit();
     }
+    public void saveWeatherInfoDay2(Context context,String day2Picture,String secondTem)
+    {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putString("day2Picture",day2Picture);
+        editor.putString("secondTem",secondTem);
+        editor.commit();
+    }
+    public void saveWeatherInfoDay3(Context context,String day3Picture,String thirdTem)
+    {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putString("day3Picture",day3Picture);
+        editor.putString("thirdTem",thirdTem);
+        editor.commit();
+    } public void saveWeatherInfoDay4(Context context,String day4Picture,String fourthTem)
+    {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putString("day4Picture",day4Picture);
+        editor.putString("fourthTem",fourthTem);
+        editor.commit();
+    }
+
 }

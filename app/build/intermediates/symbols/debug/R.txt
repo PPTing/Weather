@@ -543,6 +543,8 @@ int id todayTemTextView 0x7f0c0050
 int id topPanel 0x7f0c002c
 int id up 0x7f0c0008
 int id useLogo 0x7f0c0012
+int id weatherIamge 0x7f0c0062
+int id weatherInfo 0x7f0c0063
 int id withText 0x7f0c001f
 int id wrap_content 0x7f0c0020
 int integer abc_config_activityDefaultDur 0x7f0a0001
@@ -590,6 +592,7 @@ int layout select_dialog_singlechoice_material 0x7f040024
 int layout setting 0x7f040025
 int layout support_simple_spinner_dropdown_item 0x7f040026
 int layout toolbar 0x7f040027
+int layout weatherinfo 0x7f040028
 int mipmap ic_launcher 0x7f030000
 int string abc_action_bar_home_description 0x7f060000
 int string abc_action_bar_home_description_format 0x7f060001
