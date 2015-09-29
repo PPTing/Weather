@@ -49,7 +49,6 @@ public class Adapter extends ArrayAdapter<Weather>
         }
         catch (Exception e)
         {e.printStackTrace();}
-        //imageView.setImageResource(weather.getImage());
         return view;
     }
 

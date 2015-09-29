@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:2:1-20:12
+ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:2:1-22:12
 	package
 		ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:3:5-32
 		INJECTED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml
@@ -15,11 +15,11 @@ ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManif
 		INJECTED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml
 application
 ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:5:5-18:19
-MERGED from [com.android.support:appcompat-v7:23.0.1] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/AndroidManifest.xml:22:5-20
-MERGED from [com.android.support:support-v4:23.0.1] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:appcompat-v7:22.2.0] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:support-v4:22.2.0] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/AndroidManifest.xml:22:5-20
 MERGED from [com.zhy:percent-support-extends:1.0.6] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.zhy/percent-support-extends/1.0.6/AndroidManifest.xml:11:5-14:19
-MERGED from [com.android.support:appcompat-v7:23.0.1] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/AndroidManifest.xml:22:5-20
-MERGED from [com.android.support:support-v4:23.0.1] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:appcompat-v7:22.2.0] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:support-v4:22.2.0] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/AndroidManifest.xml:22:5-20
 	android:label
 		ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:8:9-41
 	android:allowBackup
@@ -48,13 +48,21 @@ uses-permission#android.permission.INTERNET
 ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:19:5-66
 	android:name
 		ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:19:22-64
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:20:5-78
+	android:name
+		ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:20:22-76
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:21:5-80
+	android:name
+		ADDED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml:21:22-78
 uses-sdk
 INJECTED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
-MERGED from [com.android.support:appcompat-v7:23.0.1] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/AndroidManifest.xml:20:5-43
-MERGED from [com.android.support:support-v4:23.0.1] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:appcompat-v7:22.2.0] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-v4:22.2.0] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/AndroidManifest.xml:20:5-43
 MERGED from [com.zhy:percent-support-extends:1.0.6] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.zhy/percent-support-extends/1.0.6/AndroidManifest.xml:7:5-9:41
-MERGED from [com.android.support:appcompat-v7:23.0.1] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/AndroidManifest.xml:20:5-43
-MERGED from [com.android.support:support-v4:23.0.1] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:appcompat-v7:22.2.0] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-v4:22.2.0] /Users/PPTing/AndroidStudioProjects/Weather/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/AndroidManifest.xml:20:5-43
 	android:targetSdkVersion
 		INJECTED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml
 		INJECTED from /Users/PPTing/AndroidStudioProjects/Weather/app/src/main/AndroidManifest.xml

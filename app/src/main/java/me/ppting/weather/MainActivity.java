@@ -1,10 +1,14 @@
 package me.ppting.weather;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.*;
+import android.location.Location;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
@@ -12,7 +16,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,6 +38,7 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity {
     private String[] data;
     private String url;
+    private String provider;
     public final static String TAG = MainActivity.class.getName();
     private TextView currentTemTextView;
     private TextView todayTemTextView;
@@ -51,7 +55,7 @@ public class MainActivity extends ActionBarActivity {
     Context context = MyApplication.getContext();
     private List<Weather> weatherList = new ArrayList<Weather>();
 
-
+    private LocationManager locationManager;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -98,8 +102,8 @@ public class MainActivity extends ActionBarActivity {
     //初始化
     public void init()
     {
-        sendRequest2Server();
-        showWeather();
+        sendRequest2Server();//请求json数据
+        showWeather();//显示天气
         currentTemTextView = (TextView)findViewById(R.id.currentTemTextView);
         todayTemTextView = (TextView)findViewById(R.id.todayTemTextView);
         logoImageView = (ImageView)findViewById(R.id.logoImageView);
@@ -112,6 +116,8 @@ public class MainActivity extends ActionBarActivity {
         String day2tem = sharedPreferences.getString("secondTem", "");
         String day2PictureUrl = sharedPreferences.getString("day2Picture", "");
         Bitmap day2bitmap = myAsyncTask.doInBackground(day2PictureUrl);
+        //Log.d(TAG,"myAsyncTask.execute is "+myAsyncTask.execute(day2PictureUrl));
+        myAsyncTask.execute(day2PictureUrl);
         Weather day2 = new Weather(day2bitmap,day2tem);
         weatherList.add(day2);
 
@@ -126,6 +132,23 @@ public class MainActivity extends ActionBarActivity {
         Bitmap day4bitmap = myAsyncTask.doInBackground(day4PictureUrl);
         Weather day4 = new Weather(day4bitmap,day4Tem);
         weatherList.add(day4);
+
+//        //定位
+//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        provider = LocationManager.GPS_PROVIDER;
+//        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED
+//                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)!=PackageManager.PERMISSION_GRANTED) {
+//            Location location = locationManager.getLastKnownLocation(provider);
+//            double x = location.getLatitude();
+//            double y = location.getLongitude();
+//            Log.d(TAG,"x is "+x);
+//            Log.d(TAG,"y is "+y);
+//        }
+
+
+
+        //
+
     }
     //发送请求获得返回的天气信息json数据
     private void sendRequest2Server()

@@ -32,5 +32,6 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="setting" />
+        android:text="setting"
+        android:id="@+id/setting"/>
 </com.zhy.android.percent.support.PercentLinearLayout>

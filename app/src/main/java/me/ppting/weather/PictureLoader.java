@@ -3,8 +3,11 @@ package me.ppting.weather;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.LinearGradient;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
+
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -14,8 +17,9 @@ import java.net.URLConnection;
 
 class MyAsyncTask extends AsyncTask<String, Integer, Bitmap> {
     // 可变长的输入参数，与AsyncTask.exucute()对应
-    public MyAsyncTask(Context context) {}
 
+    Context context = MyApplication.getContext();
+    public MyAsyncTask(Context context) {}
     @Override
     protected Bitmap doInBackground(String... params) {
         Bitmap bitmap = null;
@@ -30,21 +34,26 @@ class MyAsyncTask extends AsyncTask<String, Integer, Bitmap> {
             Log.d("PictureLoader","bitmap is "+bitmap);
             inputStream.close();
         } catch (Exception e) {
-            Log.e("msg", e.getMessage());
+            e.printStackTrace();
         }
         return bitmap;
     }
     @Override
     protected void onPostExecute(Bitmap bitmap)
     {
-//        if (bitmap != null)
-//        {
-//            image.setImageBitmap(bitmap);
-//        }
-//        else
-//        {
-//            Toast.makeText(getApplicationContext(), "网络异常", Toast.LENGTH_SHORT).show();
-//        }
+        if (bitmap != null)
+        {
+            Log.d("PictureLoader","bitmap in onPostExecute is "+bitmap);
+        }
+        else
+        {
+            Log.d("PictureLoader","bitmap in onPostExecute is "+bitmap);
+        }
+    }
+    protected void onPreExecute()
+    {
+        // 任务启动
+        Toast.makeText(context,"",Toast.LENGTH_LONG).show();
     }
 }
 //public class PictureLoader
