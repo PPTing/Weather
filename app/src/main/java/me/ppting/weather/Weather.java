@@ -2,6 +2,7 @@ package me.ppting.weather;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -13,22 +14,31 @@ public class Weather
     Context context = MyApplication.getContext();
     public final static String TAG = Weather.class.getName();
     private String date;
-    private int i;// = 0;
-
-    public int getImage()
-    {
-        //SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        //image =
+    public Bitmap getImage() {
         return image;
     }
 
-    public void setImage(int image) {
-        this.image = image;
-    }
+    //    private int image;
+//    public int getImage()
+//    {
+//        //SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//        //image =
+//        return image;
+//    }
+//
+//    public void setImage(int image) {
+//        this.image = image;
+//    }
+    private Bitmap image;
 
-    private int image;
+
     private String tem;
-    public Weather(int image,String tem)
+//    public Weather(int image,String tem)
+//    {
+//        this.image = image;
+//        this.tem = tem;
+//    }
+    public Weather(Bitmap image,String tem)
     {
         this.image = image;
         this.tem = tem;

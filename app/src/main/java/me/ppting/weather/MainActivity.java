@@ -107,17 +107,24 @@ public class MainActivity extends ActionBarActivity {
         weatherImage = (ImageView)findViewById(R.id.weatherIamge);
         //初始化Listview
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        MyAsyncTask myAsyncTask = new MyAsyncTask(context);
 
-        String day2tem = sharedPreferences.getString("secondTem","");
-        //String url = sharedPreferences.getString("dayPictureUrl", "");
-        //Bitmap bitmap = PictureLoader.loadImage(url);
-        Weather day2 = new Weather(R.mipmap.ic_launcher,day2tem);
+        String day2tem = sharedPreferences.getString("secondTem", "");
+        String day2PictureUrl = sharedPreferences.getString("day2Picture", "");
+        Bitmap day2bitmap = myAsyncTask.doInBackground(day2PictureUrl);
+        Weather day2 = new Weather(day2bitmap,day2tem);
         weatherList.add(day2);
-        String day3tem = sharedPreferences.getString("thirdTem","");
-        Weather day3 = new Weather(R.mipmap.ic_launcher,day3tem);
+
+        String day3tem = sharedPreferences.getString("thirdTem", "");
+        String day3PictureUrl = sharedPreferences.getString("day2Picture", "");
+        Bitmap day3bitmap = myAsyncTask.doInBackground(day3PictureUrl);
+        Weather day3 = new Weather(day3bitmap,day3tem);
         weatherList.add(day3);
-        String day4Tem = sharedPreferences.getString("fourthTem","");
-        Weather day4 = new Weather(R.mipmap.ic_launcher,day4Tem);
+
+        String day4Tem = sharedPreferences.getString("fourthTem", "");
+        String day4PictureUrl = sharedPreferences.getString("day4Picture", "");
+        Bitmap day4bitmap = myAsyncTask.doInBackground(day4PictureUrl);
+        Weather day4 = new Weather(day4bitmap,day4Tem);
         weatherList.add(day4);
     }
     //发送请求获得返回的天气信息json数据

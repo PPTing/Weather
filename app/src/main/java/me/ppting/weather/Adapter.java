@@ -37,14 +37,15 @@ public class Adapter extends ArrayAdapter<Weather>
         textView.setText(weather.getTem());//显示温度
         //显示天气小图标
         try {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            String url = sharedPreferences.getString("dayPictureUrl", "");
-            //Bitmap bitmap = PictureLoader.loadImage(url);
-            MyAsyncTask myAsyncTask = new MyAsyncTask(getContext());
-            Bitmap bitmap = myAsyncTask.doInBackground(url);
-            Log.d("Adapter","url is "+url);
-            Log.d("Adapter","bitmap is "+bitmap);
-            imageView.setImageBitmap(bitmap);
+//            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//            String url = sharedPreferences.getString("day2Picture", "");
+//            //Bitmap bitmap = PictureLoader.loadImage(url);
+//            MyAsyncTask myAsyncTask = new MyAsyncTask(getContext());
+//            Bitmap bitmap = myAsyncTask.doInBackground(url);
+//            Log.d("Adapter","url is "+url);
+//            Log.d("Adapter","bitmap is "+bitmap);
+//            imageView.setImageBitmap(bitmap);
+            imageView.setImageBitmap(weather.getImage());
         }
         catch (Exception e)
         {e.printStackTrace();}
