@@ -1,10 +1,7 @@
 package me.ppting.weather;
 
-
-import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.*;
@@ -20,23 +17,19 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
+
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.conn.ClientConnectionManager;
+
+
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.HttpContext;
+
+
 import org.apache.http.util.EntityUtils;
 
-import java.io.IOException;
+
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -114,8 +107,19 @@ public class MainActivity extends ActionBarActivity {
     //初始化
     public void init()
     {
-        //sendRequest2Server();//请求json数据
-        getWeatherInfo();
+        //定位
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        provider = LocationManager.GPS_PROVIDER;
+        Location location = locationManager.getLastKnownLocation(provider);
+        Log.d(TAG,"location is "+location);
+        if (location!=null) {
+            double x = location.getLatitude();
+            double y = location.getLongitude();
+            Log.d(TAG, "x is " + x);
+            Log.d(TAG, "y is " + y);
+            getCity(x,y);//获取到城市以后
+        }
+        //getCity();
         showWeather();//显示天气
         currentTemTextView = (TextView)findViewById(R.id.currentTemTextView);
         todayTemTextView = (TextView)findViewById(R.id.todayTemTextView);
@@ -146,62 +150,9 @@ public class MainActivity extends ActionBarActivity {
         Weather day4 = new Weather(day4bitmap,day4Tem);
         weatherList.add(day4);
 
-        //定位
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        provider = LocationManager.GPS_PROVIDER;
-//        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED
-//                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)!=PackageManager.PERMISSION_GRANTED) {
-            Location location = locationManager.getLastKnownLocation(provider);
-        Log.d(TAG,"location is "+location);
-        if (location!=null) {
-            double x = location.getLatitude();
-            double y = location.getLongitude();
-            Log.d(TAG, "x is " + x);
-            Log.d(TAG, "y is " + y);
-            getCity(x,y);
-        }
-        //}
-
-
-
-        //
 
     }
-    //发送请求获得返回的天气信息json数据
-    public void getWeatherInfo()
-    {
-        new Thread(new Runnable() {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    HttpClient httpClient = new DefaultHttpClient();
-                    location = "南京";
-                    url = "http://api.map.baidu.com/telematics/v3/weather?location="+location+"&output=json&ak=gVdU1hNhSplDXKmdLtoRvK0O";
-                    HttpGet httpGet = new HttpGet(url);
-                    HttpResponse httpResponse = httpClient.execute(httpGet);
-                    if (httpResponse.getStatusLine().getStatusCode()==200)
-                    {
-                        Log.d(TAG,"服务器返回的代码为 "+httpResponse.getStatusLine().getStatusCode());
-                        Log.d(TAG,"获取json成功");
-                        HttpEntity entity = httpResponse.getEntity();
-                        String response = EntityUtils.toString(entity, "UTF-8");
 
-                        //调用解析
-                        Log.d(TAG,"获取到的数据 "+response);
-                        //创建对象调用解析方法
-                        ParseJson parseJson = new ParseJson();
-                        //parseJson.parseJsonWithGson(response);
-                        parseJson.parseJson(response);
-                    }
-                }
-                catch (Exception e)
-                {e.printStackTrace();}
-
-            }
-        }).start();
-    }
     //显示天气
     public void showWeather()
     {
@@ -246,8 +197,8 @@ public class MainActivity extends ActionBarActivity {
                     Log.d(TAG,"latitude is "+latitude);
                     Log.d(TAG,"longitute is "+longitute);
                     HttpClient httpClient = new DefaultHttpClient();
-                    //url = "http://api.map.baidu.com/geocoder?output=json&location="+latitude+","+longitute+"&key=gVdU1hNhSplDXKmdLtoRvK0O";
-                    url = "http://api.map.baidu.com/geocoder?output=json&location=32.046636,118.803883&key=gVdU1hNhSplDXKmdLtoRvK0O";
+                    url = "http://api.map.baidu.com/geocoder?output=json&location="+latitude+","+longitute+"&key=gVdU1hNhSplDXKmdLtoRvK0O";
+                    //url = "http://api.map.baidu.com/geocoder?output=json&location=32.046636,118.803883&key=gVdU1hNhSplDXKmdLtoRvK0O";
                     HttpGet httpGet = new HttpGet(url);
                     HttpResponse httpResponse = httpClient.execute(httpGet);
                     if (httpResponse.getStatusLine().getStatusCode() == 200)
@@ -257,11 +208,49 @@ public class MainActivity extends ActionBarActivity {
                         Log.d(TAG,"获取到的数据 "+response);
                         //创建对象调用解析方法
                         ParseJson parseJson = new ParseJson();
-                        parseJson.parseJsonWithGsonForCity(response);
+                        final String city = parseJson.parseJsonWithGsonForCity(response);
+                        Log.d(TAG,"city is "+city);
+                        //获取天气信息
+                        getWeatherInfo();
                     }
                 }
                 catch (Exception e)
                 {e.printStackTrace();};
+            }
+        }).start();
+    }
+    //发送请求获得返回的天气信息json数据
+    public void getWeatherInfo()
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    HttpClient httpClient = new DefaultHttpClient();
+                    location = "南京";
+                    url = "http://api.map.baidu.com/telematics/v3/weather?location="+location+"&output=json&ak=gVdU1hNhSplDXKmdLtoRvK0O";
+                    HttpGet httpGet = new HttpGet(url);
+                    HttpResponse httpResponse = httpClient.execute(httpGet);
+                    if (httpResponse.getStatusLine().getStatusCode()==200)
+                    {
+                        Log.d(TAG,"服务器返回的代码为 "+httpResponse.getStatusLine().getStatusCode());
+                        Log.d(TAG,"获取json成功");
+                        HttpEntity entity = httpResponse.getEntity();
+                        String response = EntityUtils.toString(entity, "UTF-8");
+
+                        //调用解析
+                        Log.d(TAG,"获取到的数据 "+response);
+                        //创建对象调用解析方法
+                        ParseJson parseJson = new ParseJson();
+                        //parseJson.parseJsonWithGson(response);
+                        parseJson.parseJson(response);
+                    }
+                }
+                catch (Exception e)
+                {e.printStackTrace();}
+
             }
         }).start();
     }

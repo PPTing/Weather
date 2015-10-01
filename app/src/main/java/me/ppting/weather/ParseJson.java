@@ -39,12 +39,13 @@ public class ParseJson
         /////////////////////////////////////////////////////
 
     }
-    public void parseJsonWithGsonForCity(String jsonData)
+    public String parseJsonWithGsonForCity(String jsonData)
     {
         Log.d(TAG,"用gson解析json获取城市");
         Gson gson = new Gson();
         CityInfo cityInfo = gson.fromJson(jsonData,CityInfo.class);
         Log.d(TAG,"city is "+cityInfo.getResult().getAddressComponent().getCity());
+        return cityInfo.getResult().getAddressComponent().getCity();
     }
     //解析response
     public void parseJson(String jsonData)

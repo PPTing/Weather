@@ -3,6 +3,7 @@ package me.ppting.weather;
 /**
  * Created by PPTing on 15/10/1.
  */
+//解析数据得到当前城市
 public class CityInfo
 {
     public String getStatus() {
