@@ -31,16 +31,20 @@ public class ParseJson
         //下面两行 解析为数组
         //List<WeatherInfo> weatherList = gson.fromJson(jsonData, new TypeToken<List<WeatherInfo>>(){}.getType());
         //for (WeatherInfo weatherInfo : weatherList)
-        WeatherInfo.Results results = gson.fromJson(jsonData,WeatherInfo.Results.class);
+        //WeatherInfo.Results results = gson.fromJson(jsonData,WeatherInfo.Results.class);
         Log.d(TAG,"error is "+weatherInfo.getError());
         Log.d(TAG,"status is "+weatherInfo.getStatus());
         Log.d(TAG,"date is "+weatherInfo.getDate());
+        Log.d(TAG,"currentcity is "+weatherInfo.getResults().getCurrentCity());
         /////////////////////////////////////////////////////
 
-        WeatherInfo w = new WeatherInfo();
-        WeatherInfo.Results results1 = new WeatherInfo.Results();
-        Log.d(TAG, "" + results1.getCurrentCity());
-
+    }
+    public void parseJsonWithGsonForCity(String jsonData)
+    {
+        Log.d(TAG,"用gson解析json获取城市");
+        Gson gson = new Gson();
+        CityInfo cityInfo = gson.fromJson(jsonData,CityInfo.class);
+        Log.d(TAG,"city is "+cityInfo.getResult().getAddressComponent().getCity());
     }
     //解析response
     public void parseJson(String jsonData)

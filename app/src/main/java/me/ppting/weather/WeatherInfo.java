@@ -13,8 +13,8 @@ public class WeatherInfo
     private String error;
     private String status;
     private String date;
-    public List<Results> results;
-
+//    public List<Results> results;
+    public Results results;
 
     public String getError() {return error;}
     public void  setError(String error) {this.error = error;}
@@ -24,34 +24,36 @@ public class WeatherInfo
     public void setDate(String date){this.date = date;}
 
 
-    public List<Results> getResults(){return results;}
-    public void setresults(List<Results> results){this.results = results;}
+    //public List<Results> getResults(){return results;}
+    //public void setresults(List<Results> results){this.results = results;}
+    public Results getResults(){return results;}
+    public void setResults(Results results){this.results = results;}
     public static class Results
     {
         public String currentCity;
         public String pm25;
-        public List<index> index;
-        private List<weather_data> weather_data;
+//        public List<index> index;
+//        private List<weather_data> weather_data;
         //get and set
         public String getCurrentCity(){return currentCity;}
         public void setCurrentCity(String currentCity){this.currentCity = currentCity;}
         public String getPm25(){return pm25;}
         public void setPm25(String pm25){this.pm25 = pm25;}
-        public List<WeatherInfo.Results.index> getIndex() {
-            return index;
-        }
-
-        public void setIndex(List<WeatherInfo.Results.index> index) {
-            this.index = index;
-        }
-
-        public List<WeatherInfo.Results.weather_data> getWeather_data() {
-            return weather_data;
-        }
-
-        public void setWeather_data(List<WeatherInfo.Results.weather_data> weather_data) {
-            this.weather_data = weather_data;
-        }
+//        public List<WeatherInfo.Results.index> getIndex() {
+//            return index;
+//        }
+//
+//        public void setIndex(List<WeatherInfo.Results.index> index) {
+//            this.index = index;
+//        }
+//
+//        public List<WeatherInfo.Results.weather_data> getWeather_data() {
+//            return weather_data;
+//        }
+//
+//        public void setWeather_data(List<WeatherInfo.Results.weather_data> weather_data) {
+//            this.weather_data = weather_data;
+//        }
 
         public class index
         {
