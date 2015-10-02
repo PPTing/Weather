@@ -13,9 +13,6 @@ public class WeatherInfo
     private String error;
     private String status;
     private String date;
-//    public List<Results> results;
-    public Results results;
-
     public String getError() {return error;}
     public void  setError(String error) {this.error = error;}
     public String getStatus() {return status;}
@@ -24,38 +21,64 @@ public class WeatherInfo
     public void setDate(String date){this.date = date;}
 
 
-    //public List<Results> getResults(){return results;}
-    //public void setresults(List<Results> results){this.results = results;}
-    public Results getResults(){return results;}
-    public void setResults(Results results){this.results = results;}
+    public List<Results> results = new ArrayList<Results>();
+    public List<Results> getResults(){return results;}
+    public void setresults(List<Results> results){this.results = results;}
+//    public Results results;
+//    public Results getResults(){return results;}
+//    public void setResults(Results results){this.results = results;}
+
     public static class Results
     {
         public String currentCity;
         public String pm25;
-//        public List<index> index;
-//        private List<weather_data> weather_data;
+
+        public List<Index> getIndex() {
+            return index;
+        }
+
+        public void setIndex(List<Index> index) {
+            this.index = index;
+        }
+
+        public List<Index> index = new ArrayList<Index>();
+
+        public List<Weather_data> getWeather_data() {
+            return weather_data;
+        }
+
+        public void setWeather_data(List<Weather_data> weather_data) {
+            this.weather_data = weather_data;
+        }
+
+        private List<Weather_data> weather_data = new ArrayList<Weather_data>();
         //get and set
         public String getCurrentCity(){return currentCity;}
         public void setCurrentCity(String currentCity){this.currentCity = currentCity;}
         public String getPm25(){return pm25;}
         public void setPm25(String pm25){this.pm25 = pm25;}
-//        public List<WeatherInfo.Results.index> getIndex() {
+
+//        public Index getIndex() {
 //            return index;
 //        }
 //
-//        public void setIndex(List<WeatherInfo.Results.index> index) {
+//        public void setIndex(Index index) {
 //            this.index = index;
 //        }
 //
-//        public List<WeatherInfo.Results.weather_data> getWeather_data() {
+//        public Index index;
+//
+//        public Weather_data getWeather_data() {
 //            return weather_data;
 //        }
 //
-//        public void setWeather_data(List<WeatherInfo.Results.weather_data> weather_data) {
+//        public void setWeather_data(Weather_data weather_data) {
 //            this.weather_data = weather_data;
 //        }
+//
 
-        public class index
+
+        public static class Index
         {
             private String title;
             private String zs;
@@ -72,7 +95,7 @@ public class WeatherInfo
             public void setDes(String des) {this.des = des;}
 
         }
-        public class weather_data
+        public class Weather_data
         {
             private String data;
             private String dayPictureUrl;

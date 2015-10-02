@@ -244,7 +244,7 @@ public class MainActivity extends ActionBarActivity {
                         Log.d(TAG,"获取到的数据 "+response);
                         //创建对象调用解析方法
                         ParseJson parseJson = new ParseJson();
-                        //parseJson.parseJsonWithGson(response);
+                        parseJson.parseJsonWithGson(response);
                         parseJson.parseJson(response);
                     }
                 }

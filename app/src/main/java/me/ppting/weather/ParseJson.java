@@ -8,10 +8,12 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,20 +26,21 @@ public class ParseJson
     public final static String TAG = ParseJson.class.getName();
     //用gson解析返回的数据
     public void parseJsonWithGson(String jsonData) {
-        Log.d(TAG, "用gson进行解析");
+        Log.d(TAG,"用gson进行解析");
         Gson gson = new Gson();
         WeatherInfo weatherInfo = gson.fromJson(jsonData,WeatherInfo.class);
-        Log.d(TAG,"weatherInfo"+weatherInfo);
+        Log.d(TAG,"weatherInfo using gson"+weatherInfo);
+        Log.d(TAG,"error using is "+weatherInfo.getError());
+        Log.d(TAG,"status using is "+weatherInfo.getStatus());
+        Log.d(TAG,"date using is "+weatherInfo.getDate());
+        Log.d(TAG, "currentcity using is " + weatherInfo.getResults().get(0).getCurrentCity());
         //下面两行 解析为数组
-        //List<WeatherInfo> weatherList = gson.fromJson(jsonData, new TypeToken<List<WeatherInfo>>(){}.getType());
-        //for (WeatherInfo weatherInfo : weatherList)
+//        List<WeatherInfo.Results> weatherList = gson.fromJson(jsonData, new TypeToken<List<WeatherInfo.Results>>(){}.getType());
+//        for (int i = 0;i<weatherList.size();i++)
+//        {
+//            Log.d(TAG,"use list to parse currentcity "+weatherList);
+//        }
         //WeatherInfo.Results results = gson.fromJson(jsonData,WeatherInfo.Results.class);
-        Log.d(TAG,"error is "+weatherInfo.getError());
-        Log.d(TAG,"status is "+weatherInfo.getStatus());
-        Log.d(TAG,"date is "+weatherInfo.getDate());
-        Log.d(TAG,"currentcity is "+weatherInfo.getResults().getCurrentCity());
-        /////////////////////////////////////////////////////
-
     }
     public String parseJsonWithGsonForCity(String jsonData)
     {
