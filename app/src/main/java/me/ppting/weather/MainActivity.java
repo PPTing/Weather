@@ -245,7 +245,7 @@ public class MainActivity extends ActionBarActivity {
                         //创建对象调用解析方法
                         ParseJson parseJson = new ParseJson();
                         parseJson.parseJsonWithGson(response);
-                        parseJson.parseJson(response);
+                        //parseJson.parseJson(response);
                     }
                 }
                 catch (Exception e)
