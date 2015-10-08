@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/settinglayout"
     android:layout_gravity="start"
-    android:orientation="vertical"
-    android:background="#999999">
+    android:orientation="vertical">
 
 
     <!--<android.support.v4.widget.DrawerLayout-->
@@ -34,4 +33,8 @@
         android:layout_height="wrap_content"
         android:text="setting"
         android:id="@+id/setting"/>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/choosecity"/>
 </com.zhy.android.percent.support.PercentLinearLayout>

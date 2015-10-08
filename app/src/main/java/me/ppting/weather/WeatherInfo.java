@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * Created by PPTing on 15/9/22.
+ * 配合gson解析
  */
 public class WeatherInfo
 {

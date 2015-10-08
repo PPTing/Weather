@@ -6,17 +6,23 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.*;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -35,10 +41,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.MissingFormatArgumentException;
 
 public class MainActivity extends ActionBarActivity {
-    private String[] data;
     private String url;
     private String provider;
     public final static String TAG = MainActivity.class.getName();
@@ -48,18 +53,16 @@ public class MainActivity extends ActionBarActivity {
     private ImageView weatherImage;
     private ListView weatherInfoListView;
 
-
     private String location;
-    private double latitude;
-    private double longitute;
     public static final int UPDATEREALTEM = 1;
     public static final int UPDATETODAYTEM = 2;
     public static final int UPDATEDAYPICURL = 3;
 
     Context context = MyApplication.getContext();
-    private List<Weather> weatherList = new ArrayList<Weather>();
+    //private List<Weather> weatherList = new ArrayList<Weather>();
 
     private LocationManager locationManager;
+    private String[] datatest = {"naning","beijing","shantou"};
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -71,9 +74,15 @@ public class MainActivity extends ActionBarActivity {
         }
         //初始化
         init();
+        //ListView 的 Adapter
+        //WeatherInfoAdapter adapter = new WeatherInfoAdapter(MainActivity.this,R.layout.weatherinfo,weatherList);
+        //weatherInfoListView.setAdapter(adapter);
 
-        Adapter adapter = new Adapter(MainActivity.this,R.layout.weatherinfo,weatherList);
-        weatherInfoListView.setAdapter(adapter);
+        ArrayAdapter<String> chooseCityAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,datatest);
+        ListView chooseCity = (ListView)findViewById(R.id.choosecity);
+        chooseCity.setAdapter(chooseCityAdapter);
+        Log.d(TAG,"chooseCity is"+chooseCity);
     }
 
     //获取解析后的数据然后改变图标和温度
@@ -117,43 +126,45 @@ public class MainActivity extends ActionBarActivity {
             double y = location.getLongitude();
             Log.d(TAG, "x is " + x);
             Log.d(TAG, "y is " + y);
-            getCity(x,y);//获取到城市以后
+            getCity(x,y);//获取城市后getWeatherInfo()
         }
-        //getCity();
+
         showWeather();//显示天气
         currentTemTextView = (TextView)findViewById(R.id.currentTemTextView);
         todayTemTextView = (TextView)findViewById(R.id.todayTemTextView);
         logoImageView = (ImageView)findViewById(R.id.logoImageView);
         weatherInfoListView = (ListView)findViewById(R.id.listview);
         weatherImage = (ImageView)findViewById(R.id.weatherIamge);
+        DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+
         //初始化Listview
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        MyAsyncTask myAsyncTask = new MyAsyncTask(context);
-
-        String day2tem = sharedPreferences.getString("secondTem", "");
-        String day2PictureUrl = sharedPreferences.getString("day2Picture", "");
-        Bitmap day2bitmap = myAsyncTask.doInBackground(day2PictureUrl);
-        //Log.d(TAG,"myAsyncTask.execute is "+myAsyncTask.execute(day2PictureUrl));
-        myAsyncTask.execute(day2PictureUrl);
-        Weather day2 = new Weather(day2bitmap,day2tem);
-        weatherList.add(day2);
-
-        String day3tem = sharedPreferences.getString("thirdTem", "");
-        String day3PictureUrl = sharedPreferences.getString("day2Picture", "");
-        Bitmap day3bitmap = myAsyncTask.doInBackground(day3PictureUrl);
-        Weather day3 = new Weather(day3bitmap,day3tem);
-        weatherList.add(day3);
-
-        String day4Tem = sharedPreferences.getString("fourthTem", "");
-        String day4PictureUrl = sharedPreferences.getString("day4Picture", "");
-        Bitmap day4bitmap = myAsyncTask.doInBackground(day4PictureUrl);
-        Weather day4 = new Weather(day4bitmap,day4Tem);
-        weatherList.add(day4);
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//        MyAsyncTask myAsyncTask = new MyAsyncTask(context);
+//
+//        String day2tem = sharedPreferences.getString("secondTem", "");
+//        String day2PictureUrl = sharedPreferences.getString("day2Picture", "");
+//        Bitmap day2bitmap = myAsyncTask.doInBackground(day2PictureUrl);
+//        Log.d(TAG, "myAsyncTask.execute is " + myAsyncTask.execute(day2PictureUrl));
+//
+//        Weather day2 = new Weather(day2bitmap,day2tem);
+//        weatherList.add(day2);
+//
+//        String day3tem = sharedPreferences.getString("thirdTem", "");
+//        String day3PictureUrl = sharedPreferences.getString("day2Picture", "");
+//        Bitmap day3bitmap = myAsyncTask.doInBackground(day3PictureUrl);
+//        Weather day3 = new Weather(day3bitmap,day3tem);
+//        weatherList.add(day3);
+//
+//        String day4Tem = sharedPreferences.getString("fourthTem", "");
+//        String day4PictureUrl = sharedPreferences.getString("day4Picture", "");
+//        Bitmap day4bitmap = myAsyncTask.doInBackground(day4PictureUrl);
+//        Weather day4 = new Weather(day4bitmap,day4Tem);
+//        weatherList.add(day4);
 
 
     }
-
-    //显示天气
+//
+    //显示当天天气
     public void showWeather()
     {
         new Thread(new Runnable() {
@@ -186,6 +197,7 @@ public class MainActivity extends ActionBarActivity {
             }
         }).start();
     }
+    //通过经纬度获取城市
     public void getCity(final double latitude,final double longitute)
     {
 
@@ -199,6 +211,7 @@ public class MainActivity extends ActionBarActivity {
                     HttpClient httpClient = new DefaultHttpClient();
                     url = "http://api.map.baidu.com/geocoder?output=json&location="+latitude+","+longitute+"&key=gVdU1hNhSplDXKmdLtoRvK0O";
                     //url = "http://api.map.baidu.com/geocoder?output=json&location=32.046636,118.803883&key=gVdU1hNhSplDXKmdLtoRvK0O";
+
                     HttpGet httpGet = new HttpGet(url);
                     HttpResponse httpResponse = httpClient.execute(httpGet);
                     if (httpResponse.getStatusLine().getStatusCode() == 200)
@@ -209,7 +222,7 @@ public class MainActivity extends ActionBarActivity {
                         //创建对象调用解析方法
                         ParseJson parseJson = new ParseJson();
                         final String city = parseJson.parseJsonWithGsonForCity(response);
-                        Log.d(TAG,"city is "+city);
+                        Log.d(TAG, "city is " + city);
                         //获取天气信息
                         getWeatherInfo();
                     }
@@ -231,6 +244,7 @@ public class MainActivity extends ActionBarActivity {
                     HttpClient httpClient = new DefaultHttpClient();
                     location = "南京";
                     url = "http://api.map.baidu.com/telematics/v3/weather?location="+location+"&output=json&ak=gVdU1hNhSplDXKmdLtoRvK0O";
+
                     HttpGet httpGet = new HttpGet(url);
                     HttpResponse httpResponse = httpClient.execute(httpGet);
                     if (httpResponse.getStatusLine().getStatusCode()==200)
@@ -239,19 +253,38 @@ public class MainActivity extends ActionBarActivity {
                         Log.d(TAG,"获取json成功");
                         HttpEntity entity = httpResponse.getEntity();
                         String response = EntityUtils.toString(entity, "UTF-8");
+                        //将response传给 MyAsyncTask 并进行异步加载 或者是将url传给 MyAsyncTask 然后解析出response
+                        MyTestAsyncTask myTestAsyncTask = new MyTestAsyncTask();
+                        myTestAsyncTask.execute(response);
 
                         //调用解析
                         Log.d(TAG,"获取到的数据 "+response);
                         //创建对象调用解析方法
-                        ParseJson parseJson = new ParseJson();
-                        parseJson.parseJsonWithGson(response);
-                        //parseJson.parseJson(response);
+//                        ParseJson parseJson = new ParseJson();
+//                        parseJson.parseJsonWithGson(response);
                     }
                 }
                 catch (Exception e)
                 {e.printStackTrace();}
-
             }
         }).start();
+    }
+
+    class MyTestAsyncTask extends AsyncTask<String,Void,List<WeatherBean>>
+    {
+        @Override
+        protected List<WeatherBean> doInBackground(String... params)
+        {
+            Log.d(TAG,"url is "+params[0]);
+            //ParseJson parseJson = new ParseJson();
+            return new ParseJson().parseJsonWithGsonTest(params[0]);
+        }
+        @Override
+        protected void onPostExecute(List<WeatherBean> weatherBeans)
+        {
+            super.onPostExecute(weatherBeans);
+            WeatherListAdapter adapter = new WeatherListAdapter(MainActivity.this,weatherBeans);
+            weatherInfoListView.setAdapter(adapter);
+        }
     }
 }

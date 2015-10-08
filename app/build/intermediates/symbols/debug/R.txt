@@ -454,6 +454,7 @@ int id button 0x7f0c0050
 int id buttonPanel 0x7f0c0036
 int id cancel_action 0x7f0c0057
 int id checkbox 0x7f0c0038
+int id choosecity 0x7f0c0065
 int id chronometer 0x7f0c005d
 int id collapseActionView 0x7f0c0017
 int id contentPanel 0x7f0c0031
@@ -530,8 +531,8 @@ int id todayTemTextView 0x7f0c0053
 int id topPanel 0x7f0c002e
 int id up 0x7f0c0008
 int id useLogo 0x7f0c0012
-int id weatherIamge 0x7f0c0065
-int id weatherInfo 0x7f0c0066
+int id weatherIamge 0x7f0c0066
+int id weatherInfo 0x7f0c0067
 int id withText 0x7f0c001a
 int id wrap_content 0x7f0c001d
 int integer abc_config_activityDefaultDur 0x7f0a0001

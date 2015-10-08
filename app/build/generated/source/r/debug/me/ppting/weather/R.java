@@ -1704,6 +1704,7 @@ containing a value of this type.
         public static final int buttonPanel=0x7f0c0036;
         public static final int cancel_action=0x7f0c0057;
         public static final int checkbox=0x7f0c0038;
+        public static final int choosecity=0x7f0c0065;
         public static final int chronometer=0x7f0c005d;
         public static final int collapseActionView=0x7f0c0017;
         public static final int contentPanel=0x7f0c0031;
@@ -1780,8 +1781,8 @@ containing a value of this type.
         public static final int topPanel=0x7f0c002e;
         public static final int up=0x7f0c0008;
         public static final int useLogo=0x7f0c0012;
-        public static final int weatherIamge=0x7f0c0065;
-        public static final int weatherInfo=0x7f0c0066;
+        public static final int weatherIamge=0x7f0c0066;
+        public static final int weatherInfo=0x7f0c0067;
         public static final int withText=0x7f0c001a;
         public static final int wrap_content=0x7f0c001d;
     }
