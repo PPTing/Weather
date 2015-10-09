@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Created by PPTing on 15/9/24.
@@ -37,14 +38,37 @@ public class ParseJson
             for (int i = 0;i<3;i++)
             {
                 WeatherBean weatherBean = new WeatherBean();
-                weatherBean.weatherUrl = weatherInfo.getResults().get(0).getWeather_data().get(i).getDayPictureUrl();
-                weatherBean.weatherTem = weatherInfo.getResults().get(0).getWeather_data().get(i).getTemperature();
+                weatherBean.weatherUrl = weatherInfo.getResults().get(0).getWeather_data().get(i+1).getDayPictureUrl();
+                weatherBean.weatherTem = weatherInfo.getResults().get(0).getWeather_data().get(i+1).getTemperature();
                 weatherBeanList.add(weatherBean);
             }
         }catch (Exception e)
         {e.printStackTrace();}
 
         return weatherBeanList;
+    }
+    public List<TodayWeatherInfo> parseJsonWithGsonForTodayInfo(String jsonData)
+    {
+        List<TodayWeatherInfo> todayWeatherInfoList = new ArrayList<>();
+        Gson gson = new Gson();
+        WeatherInfo weatherInfo = gson.fromJson(jsonData, WeatherInfo.class);
+
+        try {
+            TodayWeatherInfo todayWeatherInfo = new TodayWeatherInfo();
+            todayWeatherInfo.todayUrl = weatherInfo.getResults().get(0).getWeather_data().get(0).getDayPictureUrl();
+            todayWeatherInfo.todayTem = weatherInfo.getResults().get(0).getWeather_data().get(0).getTemperature();
+            String realTem = getRealTem(weatherInfo);
+            todayWeatherInfo.currentTem = realTem;
+            //weatherInfo.getResults().get(0).getWeather_data().get(0).getDate();
+            todayWeatherInfoList.add(todayWeatherInfo);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        Log.d(TAG,"todayWeatherInfoList is "+todayWeatherInfoList);
+        return todayWeatherInfoList;
+
     }
     public String parseJsonWithGsonForCity(String jsonData)
     {
@@ -114,25 +138,25 @@ public class ParseJson
 //        Log.d(TAG, "正则表达式找到的一天温度 " + todayTem);
 //        return todayTem;
 //    }
-//    public String getRealTem(WeatherInfo weatherInfo)
-//    {
-//        String strGetRealTem = weatherInfo.getResults().get(0).getWeather_data().get(0).getDate().toString();
-//        Log.d(TAG, "strGetRealTem is " + strGetRealTem);
-//        String regExGetRealTem = "：\\d+";
-//        Pattern patternGetRealTem = Pattern.compile(regExGetRealTem);
-//        Matcher matcherGetRealTem = patternGetRealTem.matcher(strGetRealTem);
-//        boolean isFindRealTemWithColon = matcherGetRealTem.find();
-//        final String realTemWithColon = matcherGetRealTem.group();
-//        Log.d(TAG, "realTemWithColon is " + realTemWithColon);
-//        String regExWithoutColon = "\\d+";
-//        Pattern patternWithoutColon = Pattern.compile(regExWithoutColon);
-//        Matcher matcherWithoutColon = patternWithoutColon.matcher(realTemWithColon);
-//        boolean isFindRealtem = matcherWithoutColon.find();
-//        final String realTem = matcherWithoutColon.group();
-//        Log.d(TAG, "是否找到了实时温度 " + isFindRealtem);
-//        Log.d(TAG, "正则表达式找到的实时温度 realTem " + realTem);
-//        return realTem;
-//    }
+    public String getRealTem(WeatherInfo weatherInfo)
+    {
+        String strGetRealTem = weatherInfo.getResults().get(0).getWeather_data().get(0).getDate().toString();
+        Log.d(TAG, "strGetRealTem is " + strGetRealTem);
+        String regExGetRealTem = "：\\d+";
+        Pattern patternGetRealTem = Pattern.compile(regExGetRealTem);
+        Matcher matcherGetRealTem = patternGetRealTem.matcher(strGetRealTem);
+        boolean isFindRealTemWithColon = matcherGetRealTem.find();
+        final String realTemWithColon = matcherGetRealTem.group();
+        Log.d(TAG, "realTemWithColon is " + realTemWithColon);
+        String regExWithoutColon = "\\d+";
+        Pattern patternWithoutColon = Pattern.compile(regExWithoutColon);
+        Matcher matcherWithoutColon = patternWithoutColon.matcher(realTemWithColon);
+        boolean isFindRealtem = matcherWithoutColon.find();
+        final String realTem = matcherWithoutColon.group();
+        Log.d(TAG, "是否找到了实时温度 " + isFindRealtem);
+        Log.d(TAG, "正则表达式找到的实时温度 realTem " + realTem);
+        return realTem;
+    }
 //    public String getDate(WeatherInfo weatherInfo)
 //    {
 //        String strGetDate = weatherInfo.getDate();

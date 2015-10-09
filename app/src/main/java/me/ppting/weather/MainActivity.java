@@ -1,7 +1,6 @@
 package me.ppting.weather;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.*;
@@ -9,8 +8,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import android.os.StrictMode;
-import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -19,29 +16,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.gson.Gson;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-
 import org.apache.http.client.methods.HttpGet;
-
-
 import org.apache.http.impl.client.DefaultHttpClient;
-
-
 import org.apache.http.util.EntityUtils;
-
-
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.MissingFormatArgumentException;
+
 
 public class MainActivity extends ActionBarActivity {
     private String url;
@@ -54,13 +41,9 @@ public class MainActivity extends ActionBarActivity {
     private ListView weatherInfoListView;
 
     private String location;
-    public static final int UPDATEREALTEM = 1;
-    public static final int UPDATETODAYTEM = 2;
-    public static final int UPDATEDAYPICURL = 3;
+    public static final int UPDATEDAYPICURL = 1;
 
     Context context = MyApplication.getContext();
-    //private List<Weather> weatherList = new ArrayList<Weather>();
-
     private LocationManager locationManager;
     private String[] datatest = {"naning","beijing","shantou"};
     @Override
@@ -68,25 +51,24 @@ public class MainActivity extends ActionBarActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
         //初始化
-        init();
-        //ListView 的 Adapter
-        //WeatherInfoAdapter adapter = new WeatherInfoAdapter(MainActivity.this,R.layout.weatherinfo,weatherList);
-        //weatherInfoListView.setAdapter(adapter);
+        currentTemTextView = (TextView)findViewById(R.id.currentTemTextView);
+        todayTemTextView = (TextView)findViewById(R.id.todayTemTextView);
+        logoImageView = (ImageView)findViewById(R.id.logoImageView);
+        weatherInfoListView = (ListView)findViewById(R.id.listview);
+        weatherImage = (ImageView)findViewById(R.id.weatherIamge);
+        DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+
+        getLocation();
+
 
         ArrayAdapter<String> chooseCityAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,datatest);
         ListView chooseCity = (ListView)findViewById(R.id.choosecity);
         chooseCity.setAdapter(chooseCityAdapter);
-        Log.d(TAG,"chooseCity is"+chooseCity);
     }
 
     //获取解析后的数据然后改变图标和温度
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     private Handler handler = new Handler()
     {
         public void handleMessage(Message message)
@@ -94,18 +76,8 @@ public class MainActivity extends ActionBarActivity {
 
             switch (message.what)
             {
-                case UPDATEREALTEM:
-                    currentTemTextView.setText(sharedPreferences.getString("realTem", ""));//更新实时温度
-                    Log.d(TAG,"更新实时温度");
-                    break;
-                case UPDATETODAYTEM:
-                    Log.d(TAG,"更新全天温度");
-                    todayTemTextView.setText(sharedPreferences.getString("todayTem", ""));//更新全天温度
-                    break;
                 case UPDATEDAYPICURL:
                     Log.d(TAG,"更新天气图");
-                    //这样获取到的是点击按钮前存放在xml文件里头的url
-                    Log.d(TAG,"updatedaypicurl is "+sharedPreferences.getString("dayPictureUrl",""));
                     logoImageView.setImageBitmap((Bitmap)message.obj);
                     break;
                 default:
@@ -114,13 +86,12 @@ public class MainActivity extends ActionBarActivity {
         }
     };
     //初始化
-    public void init()
+    public void getLocation()
     {
-        //定位
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         provider = LocationManager.GPS_PROVIDER;
         Location location = locationManager.getLastKnownLocation(provider);
-        Log.d(TAG,"location is "+location);
+        Log.d(TAG, "location is " + location);
         if (location!=null) {
             double x = location.getLatitude();
             double y = location.getLongitude();
@@ -128,75 +99,9 @@ public class MainActivity extends ActionBarActivity {
             Log.d(TAG, "y is " + y);
             getCity(x,y);//获取城市后getWeatherInfo()
         }
-
-        showWeather();//显示天气
-        currentTemTextView = (TextView)findViewById(R.id.currentTemTextView);
-        todayTemTextView = (TextView)findViewById(R.id.todayTemTextView);
-        logoImageView = (ImageView)findViewById(R.id.logoImageView);
-        weatherInfoListView = (ListView)findViewById(R.id.listview);
-        weatherImage = (ImageView)findViewById(R.id.weatherIamge);
-        DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-
-        //初始化Listview
-//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-//        MyAsyncTask myAsyncTask = new MyAsyncTask(context);
-//
-//        String day2tem = sharedPreferences.getString("secondTem", "");
-//        String day2PictureUrl = sharedPreferences.getString("day2Picture", "");
-//        Bitmap day2bitmap = myAsyncTask.doInBackground(day2PictureUrl);
-//        Log.d(TAG, "myAsyncTask.execute is " + myAsyncTask.execute(day2PictureUrl));
-//
-//        Weather day2 = new Weather(day2bitmap,day2tem);
-//        weatherList.add(day2);
-//
-//        String day3tem = sharedPreferences.getString("thirdTem", "");
-//        String day3PictureUrl = sharedPreferences.getString("day2Picture", "");
-//        Bitmap day3bitmap = myAsyncTask.doInBackground(day3PictureUrl);
-//        Weather day3 = new Weather(day3bitmap,day3tem);
-//        weatherList.add(day3);
-//
-//        String day4Tem = sharedPreferences.getString("fourthTem", "");
-//        String day4PictureUrl = sharedPreferences.getString("day4Picture", "");
-//        Bitmap day4bitmap = myAsyncTask.doInBackground(day4PictureUrl);
-//        Weather day4 = new Weather(day4bitmap,day4Tem);
-//        weatherList.add(day4);
-
-
     }
-//
-    //显示当天天气
-    public void showWeather()
-    {
-        new Thread(new Runnable() {
-            @Override
-            public void run()
-            {
-                Log.d(TAG, "Runnable is running");
-                Message msgUpdateRealTem = new Message();//更新实时温度
-                msgUpdateRealTem.what = UPDATEREALTEM;
-                handler.sendMessage(msgUpdateRealTem);
-                Message msgUpdateTodayTem = new Message();//更新全天温度
-                msgUpdateTodayTem.what = UPDATETODAYTEM;
-                handler.sendMessage(msgUpdateTodayTem);
 
-                try {//更新天气图标 获取存储在xml文件中的url并访问获取图标图片
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-                    String dayUrl = sharedPreferences.getString("dayPictureUrl","");
-                    URL url = new URL(dayUrl);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    if (connection.getResponseCode()==200) {
-                        InputStream inputStream = connection.getInputStream();
-                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                        Log.d(TAG,"bitmap of big is "+bitmap);
-                        handler.obtainMessage(UPDATEDAYPICURL, bitmap).sendToTarget();
-                    }else {
-                        Toast.makeText(context,"网络请求失败",Toast.LENGTH_LONG).show();}
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
+
     //通过经纬度获取城市
     public void getCity(final double latitude,final double longitute)
     {
@@ -253,15 +158,15 @@ public class MainActivity extends ActionBarActivity {
                         Log.d(TAG,"获取json成功");
                         HttpEntity entity = httpResponse.getEntity();
                         String response = EntityUtils.toString(entity, "UTF-8");
-                        //将response传给 MyAsyncTask 并进行异步加载 或者是将url传给 MyAsyncTask 然后解析出response
+                        //将response传给 MyAsyncTask 并进行异步加载 //或者是将url传给 MyAsyncTask 然后解析出response
                         MyAsyncTask myAsyncTask = new MyAsyncTask();
                         myAsyncTask.execute(response);
+                        //showWeather(response);
+                        ShowTodayAsyncTask showTodayAsyncTask = new ShowTodayAsyncTask();
+                        showTodayAsyncTask.execute(response);
 
                         //调用解析
                         Log.d(TAG,"获取到的天气数据 "+response);
-                        //创建对象调用解析方法
-//                        ParseJson parseJson = new ParseJson();
-//                        parseJson.parseJsonWithGson(response);
                     }
                 }
                 catch (Exception e)
@@ -269,6 +174,7 @@ public class MainActivity extends ActionBarActivity {
             }
         }).start();
     }
+
     //加载天气列表 ListView
     class MyAsyncTask extends AsyncTask<String,Void,List<WeatherBean>>
     {
@@ -276,7 +182,7 @@ public class MainActivity extends ActionBarActivity {
         protected List<WeatherBean> doInBackground(String... params)
         {
             Log.d(TAG,"传入的url是 "+params[0]);
-            //传入的是服务器返回的json数据，接着用parseJsonWithGsonTest 方法去解析得到天气图的url，返回 url到onPostExecute中
+            //传入的是服务器返回的json数据，接着用parseJsonWithGsonTest 方法去解析得到天气图的url和tem，返回 url和tem到onPostExecute中
             return new ParseJson().parseJsonWithGsonTest(params[0]);
         }
         @Override
@@ -285,6 +191,44 @@ public class MainActivity extends ActionBarActivity {
             super.onPostExecute(weatherBeans);
             WeatherListAdapter adapter = new WeatherListAdapter(MainActivity.this,weatherBeans);
             weatherInfoListView.setAdapter(adapter);
+        }
+    }
+    //异步加载当天天气图，温度，实时温度
+    class ShowTodayAsyncTask extends AsyncTask<String,Void,List<TodayWeatherInfo>>
+    {
+        @Override
+        protected List<TodayWeatherInfo> doInBackground(String... params) {
+            Log.d(TAG,"传入的url 是 "+params[0]);
+            return new ParseJson().parseJsonWithGsonForTodayInfo(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(final List<TodayWeatherInfo> todayWeatherInfos) {
+            super.onPostExecute(todayWeatherInfos);
+            Log.d(TAG, "todayweatherinfos" + todayWeatherInfos);
+            Log.d(TAG, "currenttem is " + todayWeatherInfos.get(0).currentTem);
+            currentTemTextView.setText(todayWeatherInfos.get(0).currentTem);
+            todayTemTextView.setText(todayWeatherInfos.get(0).todayTem);
+            InputStream inputStream =null;
+            Bitmap bitmap = null;
+            //多线程加载图片
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        URL url = new URL(todayWeatherInfos.get(0).todayUrl);
+                        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                        InputStream inputStream = httpURLConnection.getInputStream();
+                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        Log.d(TAG,"bitmap of big is "+bitmap);
+                        handler.obtainMessage(UPDATEDAYPICURL, bitmap).sendToTarget();
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
     }
 }
