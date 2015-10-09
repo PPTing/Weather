@@ -2,6 +2,7 @@ package me.ppting.weather;
 
 import android.content.Context;
 import android.media.Image;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,10 @@ public class WeatherListAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.imageView.setImageResource(R.mipmap.ic_launcher);
+        String url = weatherBeanList.get(position).weatherUrl;
+        Log.d("WeatherListAdapter","weatherUrl is "+url);
+        viewHolder.imageView.setTag(url);
+        new PictureLoader().showImageByAsyncTask(viewHolder.imageView,url);
         viewHolder.textView.setText(weatherBeanList.get(position).weatherTem);
         return convertView;
     }

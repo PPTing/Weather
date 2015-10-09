@@ -1,3 +1,75 @@
+package me.ppting.weather;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.widget.ImageView;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+public class PictureLoader
+{
+    public void showImageByAsyncTask(ImageView imageView,String url)
+    {
+        //MyAsyncTask myAsyncTask = new MyAsyncTask(imageView,url);
+        //myAsyncTask.execute(url);
+        new ShowPicAsyncTask(imageView, url).execute(url);
+
+    }
+    public Bitmap getBitmapFromUrl(String stringUrl)
+    {
+        Bitmap bitmap = null;
+        InputStream inputStream = null;
+        try {
+            URL url = new URL(stringUrl);
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            inputStream = new BufferedInputStream(httpURLConnection.getInputStream());
+            bitmap = BitmapFactory.decodeStream(inputStream);
+            httpURLConnection.disconnect();
+            return bitmap;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+    //异步加载天气列表里的天气图
+    private class ShowPicAsyncTask extends AsyncTask<String,Void,Bitmap>
+    {
+        private ImageView mImageView;
+        private String mUrl;
+        public ShowPicAsyncTask(ImageView imageView,String url)
+        {
+            mImageView = imageView;
+            mUrl = url;
+        }
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            getBitmapFromUrl(params[0]);
+            return getBitmapFromUrl(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            if (mImageView.getTag().equals(mUrl)) {
+                mImageView.setImageBitmap(bitmap);
+            }
+        }
+    }
+}
 //package me.ppting.weather;
 //
 //import android.content.Context;

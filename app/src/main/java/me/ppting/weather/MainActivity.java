@@ -218,7 +218,7 @@ public class MainActivity extends ActionBarActivity {
                     {
                         HttpEntity entity = httpResponse.getEntity();
                         String response = EntityUtils.toString(entity, "UTF-8");
-                        Log.d(TAG,"获取到的数据 "+response);
+                        Log.d(TAG,"获取到的城市地址数据 "+response);
                         //创建对象调用解析方法
                         ParseJson parseJson = new ParseJson();
                         final String city = parseJson.parseJsonWithGsonForCity(response);
@@ -254,11 +254,11 @@ public class MainActivity extends ActionBarActivity {
                         HttpEntity entity = httpResponse.getEntity();
                         String response = EntityUtils.toString(entity, "UTF-8");
                         //将response传给 MyAsyncTask 并进行异步加载 或者是将url传给 MyAsyncTask 然后解析出response
-                        MyTestAsyncTask myTestAsyncTask = new MyTestAsyncTask();
-                        myTestAsyncTask.execute(response);
+                        MyAsyncTask myAsyncTask = new MyAsyncTask();
+                        myAsyncTask.execute(response);
 
                         //调用解析
-                        Log.d(TAG,"获取到的数据 "+response);
+                        Log.d(TAG,"获取到的天气数据 "+response);
                         //创建对象调用解析方法
 //                        ParseJson parseJson = new ParseJson();
 //                        parseJson.parseJsonWithGson(response);
@@ -269,14 +269,14 @@ public class MainActivity extends ActionBarActivity {
             }
         }).start();
     }
-
-    class MyTestAsyncTask extends AsyncTask<String,Void,List<WeatherBean>>
+    //加载天气列表 ListView
+    class MyAsyncTask extends AsyncTask<String,Void,List<WeatherBean>>
     {
         @Override
         protected List<WeatherBean> doInBackground(String... params)
         {
-            Log.d(TAG,"url is "+params[0]);
-            //ParseJson parseJson = new ParseJson();
+            Log.d(TAG,"传入的url是 "+params[0]);
+            //传入的是服务器返回的json数据，接着用parseJsonWithGsonTest 方法去解析得到天气图的url，返回 url到onPostExecute中
             return new ParseJson().parseJsonWithGsonTest(params[0]);
         }
         @Override
