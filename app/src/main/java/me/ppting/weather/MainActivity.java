@@ -123,7 +123,7 @@ public class MainActivity extends ActionBarActivity {
                     {
                         HttpEntity entity = httpResponse.getEntity();
                         String response = EntityUtils.toString(entity, "UTF-8");
-                        Log.d(TAG,"获取到的城市地址数据 "+response);
+                        Log.d(TAG, "获取到的城市地址数据 " + response);
                         //创建对象调用解析方法
                         ParseJson parseJson = new ParseJson();
                         final String city = parseJson.parseJsonWithGsonForCity(response);
