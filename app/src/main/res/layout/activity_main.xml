@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/refresh">
         <!--主界面-->
         <include layout="@layout/main"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
-
-
-    <!--侧边栏-设置菜单-->
-    <include layout="@layout/setting"/>
-
+        <!--侧边栏-设置菜单-->
+        <include layout="@layout/setting"/>
 </android.support.v4.widget.DrawerLayout>

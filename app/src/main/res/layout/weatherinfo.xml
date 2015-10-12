@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<com.zhy.android.percent.support.PercentLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ImageView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/weatherIamge"
-        android:gravity="center_vertical|bottom"/>
+        android:gravity="center"
+        app:layout_widthPercent="50%"
+        android:src= "@mipmap/ic_launcher"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/weatherInfo"
-        android:layout_gravity="center"/>
-</LinearLayout>
+        android:gravity="center_vertical"
+        android:textSize="80px"
+        android:text="10~30"/>
+</com.zhy.android.percent.support.PercentLinearLayout>

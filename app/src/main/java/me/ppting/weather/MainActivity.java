@@ -7,10 +7,13 @@ import android.location.*;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -20,17 +23,20 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener{
     private String url;
     private String provider;
     public final static String TAG = MainActivity.class.getName();
@@ -39,6 +45,9 @@ public class MainActivity extends ActionBarActivity {
     private ImageView logoImageView;
     private ImageView weatherImage;
     private ListView weatherInfoListView;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ListView chooseCity;
+    private DrawerLayout drawerLayout;
 
     private String location;
     public static final int UPDATEDAYPICURL = 1;
@@ -57,17 +66,36 @@ public class MainActivity extends ActionBarActivity {
         logoImageView = (ImageView)findViewById(R.id.logoImageView);
         weatherInfoListView = (ListView)findViewById(R.id.listview);
         weatherImage = (ImageView)findViewById(R.id.weatherIamge);
-        DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
+        chooseCity = (ListView)findViewById(R.id.choosecity);
+        //获取地理位置
         getLocation();
-
-
-        ArrayAdapter<String> chooseCityAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1,datatest);
-        ListView chooseCity = (ListView)findViewById(R.id.choosecity);
+        //下拉刷新
+        swipeRefreshLayout.setColorSchemeResources(R.color.orange,
+                R.color.green,
+                R.color.blue);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        //侧边栏
+        ArrayAdapter chooseCityAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,datatest);
+        Log.d(TAG,"侧边栏adapter");
         chooseCity.setAdapter(chooseCityAdapter);
     }
-
+    /*
+    * 下拉刷新
+    */
+    @Override
+    public void onRefresh()
+    {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "下拉刷新");
+                getLocation();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        },3000);
+    }
     //获取解析后的数据然后改变图标和温度
     private Handler handler = new Handler()
     {
@@ -77,8 +105,8 @@ public class MainActivity extends ActionBarActivity {
             switch (message.what)
             {
                 case UPDATEDAYPICURL:
-                    Log.d(TAG,"更新天气图");
-                    logoImageView.setImageBitmap((Bitmap)message.obj);
+                    Log.d(TAG, "更新天气图");
+                    logoImageView.setImageBitmap((Bitmap) message.obj);
                     break;
                 default:
                     break;
@@ -112,11 +140,11 @@ public class MainActivity extends ActionBarActivity {
                 try
                 {
                     Log.d(TAG,"latitude is "+latitude);
-                    Log.d(TAG,"longitute is "+longitute);
+                    Log.d(TAG, "longitute is " + longitute);
                     HttpClient httpClient = new DefaultHttpClient();
                     url = "http://api.map.baidu.com/geocoder?output=json&location="+latitude+","+longitute+"&key=gVdU1hNhSplDXKmdLtoRvK0O";
                     //url = "http://api.map.baidu.com/geocoder?output=json&location=32.046636,118.803883&key=gVdU1hNhSplDXKmdLtoRvK0O";
-
+                    HttpPost httpPost = new HttpPost(url);
                     HttpGet httpGet = new HttpGet(url);
                     HttpResponse httpResponse = httpClient.execute(httpGet);
                     if (httpResponse.getStatusLine().getStatusCode() == 200)
