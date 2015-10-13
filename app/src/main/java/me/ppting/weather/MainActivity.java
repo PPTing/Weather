@@ -1,5 +1,6 @@
 package me.ppting.weather;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,36 +8,36 @@ import android.location.*;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
-
-public class MainActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener{
+//ActionBarActivity
+public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener{
     private String url;
     private String provider;
     public final static String TAG = MainActivity.class.getName();
@@ -49,18 +50,32 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
     private ListView chooseCity;
     private DrawerLayout drawerLayout;
 
+
     private String location;
     public static final int UPDATEDAYPICURL = 1;
 
     Context context = MyApplication.getContext();
     private LocationManager locationManager;
-    private String[] datatest = {"naning","beijing","shantou"};
+    private ArrayAdapter chooseCityAdapter;
+    private String[] datatest = {"Nanjing","Beijing","Wuxi"};
+    private ArrayList<String> list= new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //初始化
+        init();
+        //初始化侧边栏
+        initDrawerlayout();
+        //侧边栏
+
+        //获取地理位置
+        getLocation();
+    }
+    //初始化
+    public void init()
+    {
         currentTemTextView = (TextView)findViewById(R.id.currentTemTextView);
         todayTemTextView = (TextView)findViewById(R.id.todayTemTextView);
         logoImageView = (ImageView)findViewById(R.id.logoImageView);
@@ -69,17 +84,29 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
         chooseCity = (ListView)findViewById(R.id.choosecity);
-        //获取地理位置
-        getLocation();
-        //下拉刷新
+        //下拉刷新 控件 颜色
         swipeRefreshLayout.setColorSchemeResources(R.color.orange,
                 R.color.green,
                 R.color.blue);
         swipeRefreshLayout.setOnRefreshListener(this);
-        //侧边栏
-        ArrayAdapter chooseCityAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,datatest);
-        Log.d(TAG,"侧边栏adapter");
+    }
+    //初始化侧边栏
+    public void initDrawerlayout()
+    {
+        list.add("Nanjing");
+        list.add("Beijing");
+        list.add("Wuxi");
+        chooseCityAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,datatest);
+        Log.d(TAG, "侧边栏adapter");
         chooseCity.setAdapter(chooseCityAdapter);
+        chooseCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (list.get(position).equals("Nanjing")) {
+                    Toast.makeText(context,"Click Nanjing",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
     /*
     * 下拉刷新
@@ -94,7 +121,7 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
                 getLocation();
                 swipeRefreshLayout.setRefreshing(false);
             }
-        },3000);
+        }, 3000);
     }
     //获取解析后的数据然后改变图标和温度
     private Handler handler = new Handler()
@@ -113,14 +140,14 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
             }
         }
     };
-    //初始化
+    //获取位置信息
     public void getLocation()
     {
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         provider = LocationManager.GPS_PROVIDER;
         Location location = locationManager.getLastKnownLocation(provider);
         Log.d(TAG, "location is " + location);
-        if (location!=null) {
+        if (location != null) {
             double x = location.getLatitude();
             double y = location.getLongitude();
             Log.d(TAG, "x is " + x);
